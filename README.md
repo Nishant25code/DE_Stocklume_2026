@@ -22,10 +22,10 @@
 
 | Role | Name | Enrollment No. | GitHub Username |
 |------|------|----------------|-----------------|
-| Group Lead | | | |
-| Member 2 | | | |
-| Member 3 | | | |
-| Member 4 | | | |
+| Group Lead | Nishant Jain | 2501010656 | Nishant25code |
+| Member 2 | Kalpna Beniwal | 2501010209 | KalpnaBeniwal868 |
+| Member 3 | Nadipulli Cellina Achari | 2501010289 | cellinaachari505 |
+| Member 4 | Jassnoor Singh | 2501010201 | Noor0021 |
 
 **Team No.:** ____ · **Section:** ____ · **Repository URL:** ____
 
