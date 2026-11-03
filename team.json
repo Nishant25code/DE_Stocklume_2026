@@ -1,0 +1,27 @@
+{
+  "team_number": "T0069",
+  "group_lead": {
+    "name": "Nishant Jain",
+    "enrollment_no": "2501010656",
+    "github": "Nishant25code"
+  },
+  "members": [
+    {
+      "name": "Kalpna Beniwal",
+      "enrollment_no": "2501010209",
+      "github": "KalpnaBeniwal868"
+    },
+    {
+      "name": "Nadipulli Cellina Achari",
+      "enrollment_no": "2501010289",
+      "github": "cellinaachari505"
+    },
+    {
+      "name": "Jassnoor Singh",
+      "enrollment_no": "2501010201",
+      "github": "Noor0021"
+    }
+  ],
+  "postgres_version": "",
+  "laptop_used_for_benchmarks": ""
+}
