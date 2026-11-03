@@ -27,7 +27,7 @@
 | Member 3 | Nadipulli Cellina Achari | 2501010289 | cellinaachari505 |
 | Member 4 | Jassnoor Singh | 2501010201 | Noor0021 |
 
-**Team No.:** ____ · **Section:** ____ · **Repository URL:** ____
+**Team No.:** T0069 · **Section:** D · **Repository URL:** https://github.com/Nishant25code/DE_Stocklume_2026
 
 ---
 
