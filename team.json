@@ -22,6 +22,6 @@
       "github": "Noor0021"
     }
   ],
-  "postgres_version": " ",
-  "laptop_used_for_benchmarks": ""
+  "postgres_version": "PostgreSQL 17.12 (Homebrew)",
+  "laptop_used_for_benchmarks": "MacBook Air (Mac16,1), Apple M4, 16 GB RAM, macOS"
 }

@@ -1,0 +1,100 @@
+erDiagram
+    cities ||--o{ users : "home city of"
+    cities ||--o{ merchants : "located in"
+    users ||--|{ bank_accounts : "links (1 primary)"
+    users ||--|{ vpas : "owns"
+    bank_accounts ||--|{ vpas : "receives money for"
+    vpas ||--o{ transactions : "pays (payer_vpa)"
+    merchants |o--o{ transactions : "receives P2M (merchant_id, payee_vpa)"
+    transactions ||--o| rewards : "earns"
+    users ||--o{ rewards : "holds"
+    users ||--o{ bill_payments : "pays"
+    transactions ||--o{ disputes : "is disputed in"
+    users ||--o{ disputes : "raises"
+
+    cities {
+        smallint city_id PK
+        varchar city_name UK
+        varchar state
+    }
+    users {
+        integer user_id PK
+        varchar full_name
+        varchar phone UK
+        varchar email UK "nullable"
+        smallint city_id FK
+        varchar kyc_status
+        boolean is_blocked
+        timestamptz created_at
+    }
+    bank_accounts {
+        integer account_id PK
+        integer user_id FK
+        varchar bank_name
+        varchar ifsc
+        varchar account_last4
+        varchar account_type
+        boolean is_primary "one per user"
+        timestamptz linked_at
+    }
+    vpas {
+        varchar vpa PK
+        integer user_id FK
+        integer account_id FK "FK (account_id,user_id)"
+        boolean is_active
+        timestamptz created_at
+    }
+    merchants {
+        integer merchant_id PK
+        varchar merchant_name
+        varchar mcc
+        varchar merchant_vpa UK
+        smallint city_id FK
+        boolean is_verified
+        date onboarded_on
+    }
+    transactions {
+        bigint txn_id PK
+        varchar upi_ref UK
+        varchar txn_type
+        varchar payer_vpa FK
+        varchar payee_vpa "FK to merchant_vpa when P2M"
+        integer merchant_id FK "null for P2P"
+        numeric amount
+        varchar note "nullable"
+        timestamptz initiated_at
+        timestamptz completed_at "null while PENDING"
+        varchar status
+        varchar failure_code "only FAILED"
+    }
+    rewards {
+        integer reward_id PK
+        integer user_id FK
+        bigint txn_id FK,UK
+        varchar reward_type
+        numeric amount
+        varchar status
+        timestamptz issued_at
+        timestamptz expires_at
+        timestamptz credited_at "only CREDITED"
+    }
+    bill_payments {
+        integer bill_id PK
+        integer user_id FK
+        varchar biller_category
+        varchar biller_name
+        varchar consumer_number
+        numeric amount
+        date due_date
+        varchar status
+        timestamptz paid_at "only PAID"
+    }
+    disputes {
+        integer dispute_id PK
+        bigint txn_id FK
+        integer raised_by FK
+        varchar reason
+        timestamptz raised_at
+        varchar status
+        timestamptz resolved_at "null while OPEN"
+    }
