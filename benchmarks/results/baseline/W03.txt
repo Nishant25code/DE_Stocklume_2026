@@ -1,0 +1,51 @@
+=== W03 run 1 ===
+Update on rewards  (cost=1093.29..1101.31 rows=0 width=0) (actual time=2.384..2.385 rows=0 loops=1)
+  Buffers: shared hit=548 dirtied=4
+  InitPlan 1
+    ->  Aggregate  (cost=1092.99..1093.00 rows=1 width=4) (actual time=1.871..1.871 rows=1 loops=1)
+          Buffers: shared hit=496
+          ->  Seq Scan on rewards rewards_1  (cost=0.00..1092.99 rows=1 width=4) (actual time=1.799..1.869 rows=2 loops=1)
+                Filter: ((user_id = 15177) AND ((status)::text = 'UNSCRATCHED'::text))
+                Rows Removed by Filter: 39797
+                Buffers: shared hit=496
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.29..8.31 rows=1 width=54) (actual time=2.244..2.244 rows=1 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Buffers: shared hit=501
+Planning:
+  Buffers: shared hit=111
+Planning Time: 0.220 ms
+Execution Time: 2.427 ms
+=== W03 run 2 ===
+Update on rewards  (cost=1093.29..1101.31 rows=0 width=0) (actual time=1.702..1.703 rows=0 loops=1)
+  Buffers: shared hit=548 dirtied=1
+  InitPlan 1
+    ->  Aggregate  (cost=1092.99..1093.00 rows=1 width=4) (actual time=1.593..1.593 rows=1 loops=1)
+          Buffers: shared hit=496
+          ->  Seq Scan on rewards rewards_1  (cost=0.00..1092.99 rows=1 width=4) (actual time=1.532..1.590 rows=2 loops=1)
+                Filter: ((user_id = 15177) AND ((status)::text = 'UNSCRATCHED'::text))
+                Rows Removed by Filter: 39797
+                Buffers: shared hit=496
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.29..8.31 rows=1 width=54) (actual time=1.599..1.600 rows=1 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Buffers: shared hit=501
+Planning:
+  Buffers: shared hit=111
+Planning Time: 0.219 ms
+Execution Time: 1.743 ms
+=== W03 run 3 ===
+Update on rewards  (cost=1093.29..1101.31 rows=0 width=0) (actual time=1.818..1.818 rows=0 loops=1)
+  Buffers: shared hit=548 dirtied=1
+  InitPlan 1
+    ->  Aggregate  (cost=1092.99..1093.00 rows=1 width=4) (actual time=1.698..1.698 rows=1 loops=1)
+          Buffers: shared hit=496
+          ->  Seq Scan on rewards rewards_1  (cost=0.00..1092.99 rows=1 width=4) (actual time=1.633..1.695 rows=2 loops=1)
+                Filter: ((user_id = 15177) AND ((status)::text = 'UNSCRATCHED'::text))
+                Rows Removed by Filter: 39797
+                Buffers: shared hit=496
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.29..8.31 rows=1 width=54) (actual time=1.705..1.706 rows=1 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Buffers: shared hit=501
+Planning:
+  Buffers: shared hit=111
+Planning Time: 0.231 ms
+Execution Time: 1.868 ms

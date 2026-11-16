@@ -1,0 +1,93 @@
+=== R06 run 1 ===
+Sort  (cost=7630.11..7630.74 rows=253 width=63) (actual time=14.757..14.778 rows=204 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 36kB
+  Buffers: shared hit=4727
+  ->  GroupAggregate  (cost=7449.82..7620.01 rows=253 width=63) (actual time=8.121..14.730 rows=204 loops=1)
+        Group Key: m.merchant_id
+        Buffers: shared hit=4724
+        ->  Merge Join  (cost=7449.82..7614.95 rows=253 width=29) (actual time=8.110..14.657 rows=220 loops=1)
+              Merge Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=4724
+              ->  Gather Merge  (cost=7449.54..7502.77 rows=457 width=10) (actual time=7.793..7.829 rows=221 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=4688
+                    ->  Sort  (cost=6449.52..6450.00 rows=190 width=10) (actual time=5.779..5.782 rows=116 loops=3)
+                          Sort Key: t.merchant_id
+                          Sort Method: quicksort  Memory: 29kB
+                          Buffers: shared hit=4688
+                          Worker 0:  Sort Method: quicksort  Memory: 28kB
+                          Worker 1:  Sort Method: quicksort  Memory: 28kB
+                          ->  Parallel Seq Scan on transactions t  (cost=0.00..6442.33 rows=190 width=10) (actual time=5.692..5.746 rows=141 loops=3)
+                                Filter: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'SUCCESS'::text))
+                                Rows Removed by Filter: 83348
+                                Buffers: shared hit=4616
+              ->  Index Scan using merchants_pkey on merchants m  (cost=0.28..125.28 rows=3000 width=23) (actual time=0.316..6.728 rows=2549 loops=1)
+                    Buffers: shared hit=36
+Planning:
+  Buffers: shared hit=231
+Planning Time: 1.315 ms
+Execution Time: 15.310 ms
+=== R06 run 2 ===
+Sort  (cost=7630.11..7630.74 rows=253 width=63) (actual time=9.264..9.755 rows=204 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 36kB
+  Buffers: shared hit=4727
+  ->  GroupAggregate  (cost=7449.82..7620.01 rows=253 width=63) (actual time=8.882..9.703 rows=204 loops=1)
+        Group Key: m.merchant_id
+        Buffers: shared hit=4724
+        ->  Merge Join  (cost=7449.82..7614.95 rows=253 width=29) (actual time=8.872..9.632 rows=220 loops=1)
+              Merge Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=4724
+              ->  Gather Merge  (cost=7449.54..7502.77 rows=457 width=10) (actual time=8.845..9.345 rows=221 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=4688
+                    ->  Sort  (cost=6449.52..6450.00 rows=190 width=10) (actual time=6.839..6.841 rows=120 loops=3)
+                          Sort Key: t.merchant_id
+                          Sort Method: quicksort  Memory: 28kB
+                          Buffers: shared hit=4688
+                          Worker 0:  Sort Method: quicksort  Memory: 28kB
+                          Worker 1:  Sort Method: quicksort  Memory: 29kB
+                          ->  Parallel Seq Scan on transactions t  (cost=0.00..6442.33 rows=190 width=10) (actual time=6.740..6.794 rows=141 loops=3)
+                                Filter: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'SUCCESS'::text))
+                                Rows Removed by Filter: 83348
+                                Buffers: shared hit=4616
+              ->  Index Scan using merchants_pkey on merchants m  (cost=0.28..125.28 rows=3000 width=23) (actual time=0.025..0.193 rows=2549 loops=1)
+                    Buffers: shared hit=36
+Planning:
+  Buffers: shared hit=231
+Planning Time: 0.337 ms
+Execution Time: 9.795 ms
+=== R06 run 3 ===
+Sort  (cost=7630.11..7630.74 rows=253 width=63) (actual time=9.101..9.319 rows=204 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 36kB
+  Buffers: shared hit=4727
+  ->  GroupAggregate  (cost=7449.82..7620.01 rows=253 width=63) (actual time=8.624..9.261 rows=204 loops=1)
+        Group Key: m.merchant_id
+        Buffers: shared hit=4724
+        ->  Merge Join  (cost=7449.82..7614.95 rows=253 width=29) (actual time=8.613..9.180 rows=220 loops=1)
+              Merge Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=4724
+              ->  Gather Merge  (cost=7449.54..7502.77 rows=457 width=10) (actual time=8.577..8.809 rows=221 loops=1)
+                    Workers Planned: 2
+                    Workers Launched: 2
+                    Buffers: shared hit=4688
+                    ->  Sort  (cost=6449.52..6450.00 rows=190 width=10) (actual time=6.781..6.784 rows=118 loops=3)
+                          Sort Key: t.merchant_id
+                          Sort Method: quicksort  Memory: 29kB
+                          Buffers: shared hit=4688
+                          Worker 0:  Sort Method: quicksort  Memory: 28kB
+                          Worker 1:  Sort Method: quicksort  Memory: 28kB
+                          ->  Parallel Seq Scan on transactions t  (cost=0.00..6442.33 rows=190 width=10) (actual time=6.692..6.742 rows=141 loops=3)
+                                Filter: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'SUCCESS'::text))
+                                Rows Removed by Filter: 83348
+                                Buffers: shared hit=4616
+              ->  Index Scan using merchants_pkey on merchants m  (cost=0.28..125.28 rows=3000 width=23) (actual time=0.035..0.246 rows=2549 loops=1)
+                    Buffers: shared hit=36
+Planning:
+  Buffers: shared hit=231
+Planning Time: 0.315 ms
+Execution Time: 9.352 ms
