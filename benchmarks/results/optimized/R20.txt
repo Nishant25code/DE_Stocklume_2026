@@ -1,0 +1,85 @@
+=== R20 run 1 ===
+GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.379..2.041 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=90
+  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.350..1.582 rows=13764.00 loops=1)
+        Sort Key: ((initiated_at)::date)
+        Sort Method: quicksort  Memory: 815kB
+        Buffers: shared hit=90
+        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.947 rows=13764.00 loops=1)
+              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=319
+Planning Time: 0.405 ms
+Execution Time: 2.066 ms
+=== R20 run 2 ===
+GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.373..2.030 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=90
+  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.345..1.570 rows=13764.00 loops=1)
+        Sort Key: ((initiated_at)::date)
+        Sort Method: quicksort  Memory: 815kB
+        Buffers: shared hit=90
+        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.006..0.931 rows=13764.00 loops=1)
+              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=319
+Planning Time: 0.415 ms
+Execution Time: 2.056 ms
+=== R20 run 3 ===
+GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.369..2.026 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=90
+  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.341..1.564 rows=13764.00 loops=1)
+        Sort Key: ((initiated_at)::date)
+        Sort Method: quicksort  Memory: 815kB
+        Buffers: shared hit=90
+        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.940 rows=13764.00 loops=1)
+              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=319
+Planning Time: 0.413 ms
+Execution Time: 2.051 ms
+=== R20 run 4 ===
+GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.374..2.050 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=90
+  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.345..1.570 rows=13764.00 loops=1)
+        Sort Key: ((initiated_at)::date)
+        Sort Method: quicksort  Memory: 815kB
+        Buffers: shared hit=90
+        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.006..0.940 rows=13764.00 loops=1)
+              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=319
+Planning Time: 0.395 ms
+Execution Time: 2.074 ms
+=== R20 run 5 ===
+GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.394..2.052 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=90
+  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.367..1.590 rows=13764.00 loops=1)
+        Sort Key: ((initiated_at)::date)
+        Sort Method: quicksort  Memory: 815kB
+        Buffers: shared hit=90
+        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.962 rows=13764.00 loops=1)
+              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=87
+Planning:
+  Buffers: shared hit=319
+Planning Time: 0.397 ms
+Execution Time: 2.077 ms

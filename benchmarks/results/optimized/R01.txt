@@ -1,0 +1,120 @@
+=== R01 run 1 ===
+Limit  (cost=17.29..19.81 rows=30 width=87) (actual time=0.737..33.889 rows=14.00 loops=1)
+  Buffers: shared hit=5487 read=1514
+  ->  Index Scan Backward using idx_txn_initiated_at on transactions t  (cost=17.29..15808.17 rows=187851 width=87) (actual time=0.736..33.888 rows=14.00 loops=1)
+        Filter: ((ANY ((payer_vpa)::text = ((hashed SubPlan 1).col1)::text)) OR (ANY ((payee_vpa)::text = ((hashed SubPlan 2).col1)::text)))
+        Rows Removed by Filter: 250454
+        Index Searches: 1
+        Buffers: shared hit=5487 read=1514
+        SubPlan 1
+          ->  Index Only Scan using idx_vpas_user_id on vpas  (cost=0.41..8.43 rows=1 width=24) (actual time=0.014..0.014 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=1 read=3
+        SubPlan 2
+          ->  Index Only Scan using idx_vpas_user_id on vpas vpas_1  (cost=0.41..8.43 rows=1 width=24) (actual time=0.004..0.004 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=351 read=8
+Planning Time: 0.998 ms
+Execution Time: 33.916 ms
+=== R01 run 2 ===
+Limit  (cost=17.29..19.81 rows=30 width=87) (actual time=0.614..31.289 rows=14.00 loops=1)
+  Buffers: shared hit=7001
+  ->  Index Scan Backward using idx_txn_initiated_at on transactions t  (cost=17.29..15808.17 rows=187851 width=87) (actual time=0.614..31.288 rows=14.00 loops=1)
+        Filter: ((ANY ((payer_vpa)::text = ((hashed SubPlan 1).col1)::text)) OR (ANY ((payee_vpa)::text = ((hashed SubPlan 2).col1)::text)))
+        Rows Removed by Filter: 250454
+        Index Searches: 1
+        Buffers: shared hit=7001
+        SubPlan 1
+          ->  Index Only Scan using idx_vpas_user_id on vpas  (cost=0.41..8.43 rows=1 width=24) (actual time=0.008..0.008 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+        SubPlan 2
+          ->  Index Only Scan using idx_vpas_user_id on vpas vpas_1  (cost=0.41..8.43 rows=1 width=24) (actual time=0.003..0.003 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=361
+Planning Time: 0.500 ms
+Execution Time: 31.313 ms
+=== R01 run 3 ===
+Limit  (cost=17.29..19.81 rows=30 width=87) (actual time=0.615..31.576 rows=14.00 loops=1)
+  Buffers: shared hit=7001
+  ->  Index Scan Backward using idx_txn_initiated_at on transactions t  (cost=17.29..15808.17 rows=187851 width=87) (actual time=0.614..31.574 rows=14.00 loops=1)
+        Filter: ((ANY ((payer_vpa)::text = ((hashed SubPlan 1).col1)::text)) OR (ANY ((payee_vpa)::text = ((hashed SubPlan 2).col1)::text)))
+        Rows Removed by Filter: 250454
+        Index Searches: 1
+        Buffers: shared hit=7001
+        SubPlan 1
+          ->  Index Only Scan using idx_vpas_user_id on vpas  (cost=0.41..8.43 rows=1 width=24) (actual time=0.008..0.008 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+        SubPlan 2
+          ->  Index Only Scan using idx_vpas_user_id on vpas vpas_1  (cost=0.41..8.43 rows=1 width=24) (actual time=0.003..0.004 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=361
+Planning Time: 0.492 ms
+Execution Time: 31.599 ms
+=== R01 run 4 ===
+Limit  (cost=17.29..19.81 rows=30 width=87) (actual time=0.610..31.310 rows=14.00 loops=1)
+  Buffers: shared hit=7001
+  ->  Index Scan Backward using idx_txn_initiated_at on transactions t  (cost=17.29..15808.17 rows=187851 width=87) (actual time=0.610..31.309 rows=14.00 loops=1)
+        Filter: ((ANY ((payer_vpa)::text = ((hashed SubPlan 1).col1)::text)) OR (ANY ((payee_vpa)::text = ((hashed SubPlan 2).col1)::text)))
+        Rows Removed by Filter: 250454
+        Index Searches: 1
+        Buffers: shared hit=7001
+        SubPlan 1
+          ->  Index Only Scan using idx_vpas_user_id on vpas  (cost=0.41..8.43 rows=1 width=24) (actual time=0.007..0.007 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+        SubPlan 2
+          ->  Index Only Scan using idx_vpas_user_id on vpas vpas_1  (cost=0.41..8.43 rows=1 width=24) (actual time=0.003..0.003 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=361
+Planning Time: 0.487 ms
+Execution Time: 31.333 ms
+=== R01 run 5 ===
+Limit  (cost=17.29..19.81 rows=30 width=87) (actual time=0.612..31.104 rows=14.00 loops=1)
+  Buffers: shared hit=7001
+  ->  Index Scan Backward using idx_txn_initiated_at on transactions t  (cost=17.29..15808.17 rows=187851 width=87) (actual time=0.612..31.103 rows=14.00 loops=1)
+        Filter: ((ANY ((payer_vpa)::text = ((hashed SubPlan 1).col1)::text)) OR (ANY ((payee_vpa)::text = ((hashed SubPlan 2).col1)::text)))
+        Rows Removed by Filter: 250454
+        Index Searches: 1
+        Buffers: shared hit=7001
+        SubPlan 1
+          ->  Index Only Scan using idx_vpas_user_id on vpas  (cost=0.41..8.43 rows=1 width=24) (actual time=0.008..0.008 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+        SubPlan 2
+          ->  Index Only Scan using idx_vpas_user_id on vpas vpas_1  (cost=0.41..8.43 rows=1 width=24) (actual time=0.003..0.003 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Heap Fetches: 2
+                Index Searches: 1
+                Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=361
+Planning Time: 0.492 ms
+Execution Time: 31.127 ms

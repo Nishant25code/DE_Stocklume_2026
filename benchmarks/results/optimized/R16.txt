@@ -1,0 +1,75 @@
+=== R16 run 1 ===
+Nested Loop  (cost=0.56..941.50 rows=114 width=51) (actual time=0.022..0.146 rows=75.00 loops=1)
+  Buffers: shared hit=309 read=1
+  ->  Index Scan using idx_disputes_open_raised on disputes d  (cost=0.14..15.62 rows=114 width=40) (actual time=0.015..0.020 rows=75.00 loops=1)
+        Index Cond: (raised_at < '2026-06-23 00:00:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=9 read=1
+  ->  Index Scan using transactions_pkey on transactions t  (cost=0.42..8.12 rows=1 width=27) (actual time=0.002..0.002 rows=1.00 loops=75)
+        Index Cond: (txn_id = d.txn_id)
+        Index Searches: 75
+        Buffers: shared hit=300
+Planning:
+  Buffers: shared hit=409
+Planning Time: 0.531 ms
+Execution Time: 0.163 ms
+=== R16 run 2 ===
+Nested Loop  (cost=0.56..941.50 rows=114 width=51) (actual time=0.015..0.191 rows=75.00 loops=1)
+  Buffers: shared hit=310
+  ->  Index Scan using idx_disputes_open_raised on disputes d  (cost=0.14..15.62 rows=114 width=40) (actual time=0.006..0.013 rows=75.00 loops=1)
+        Index Cond: (raised_at < '2026-06-23 00:00:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=10
+  ->  Index Scan using transactions_pkey on transactions t  (cost=0.42..8.12 rows=1 width=27) (actual time=0.002..0.002 rows=1.00 loops=75)
+        Index Cond: (txn_id = d.txn_id)
+        Index Searches: 75
+        Buffers: shared hit=300
+Planning:
+  Buffers: shared hit=409
+Planning Time: 0.539 ms
+Execution Time: 0.214 ms
+=== R16 run 3 ===
+Nested Loop  (cost=0.56..941.50 rows=114 width=51) (actual time=0.012..0.135 rows=75.00 loops=1)
+  Buffers: shared hit=310
+  ->  Index Scan using idx_disputes_open_raised on disputes d  (cost=0.14..15.62 rows=114 width=40) (actual time=0.005..0.010 rows=75.00 loops=1)
+        Index Cond: (raised_at < '2026-06-23 00:00:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=10
+  ->  Index Scan using transactions_pkey on transactions t  (cost=0.42..8.12 rows=1 width=27) (actual time=0.002..0.002 rows=1.00 loops=75)
+        Index Cond: (txn_id = d.txn_id)
+        Index Searches: 75
+        Buffers: shared hit=300
+Planning:
+  Buffers: shared hit=409
+Planning Time: 0.499 ms
+Execution Time: 0.152 ms
+=== R16 run 4 ===
+Nested Loop  (cost=0.56..941.50 rows=114 width=51) (actual time=0.011..0.131 rows=75.00 loops=1)
+  Buffers: shared hit=310
+  ->  Index Scan using idx_disputes_open_raised on disputes d  (cost=0.14..15.62 rows=114 width=40) (actual time=0.004..0.010 rows=75.00 loops=1)
+        Index Cond: (raised_at < '2026-06-23 00:00:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=10
+  ->  Index Scan using transactions_pkey on transactions t  (cost=0.42..8.12 rows=1 width=27) (actual time=0.001..0.001 rows=1.00 loops=75)
+        Index Cond: (txn_id = d.txn_id)
+        Index Searches: 75
+        Buffers: shared hit=300
+Planning:
+  Buffers: shared hit=409
+Planning Time: 0.486 ms
+Execution Time: 0.148 ms
+=== R16 run 5 ===
+Nested Loop  (cost=0.56..941.50 rows=114 width=51) (actual time=0.010..0.129 rows=75.00 loops=1)
+  Buffers: shared hit=310
+  ->  Index Scan using idx_disputes_open_raised on disputes d  (cost=0.14..15.62 rows=114 width=40) (actual time=0.004..0.010 rows=75.00 loops=1)
+        Index Cond: (raised_at < '2026-06-23 00:00:00+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=10
+  ->  Index Scan using transactions_pkey on transactions t  (cost=0.42..8.12 rows=1 width=27) (actual time=0.001..0.001 rows=1.00 loops=75)
+        Index Cond: (txn_id = d.txn_id)
+        Index Searches: 75
+        Buffers: shared hit=300
+Planning:
+  Buffers: shared hit=409
+Planning Time: 0.482 ms
+Execution Time: 0.145 ms

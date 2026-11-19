@@ -1,0 +1,75 @@
+=== W05 run 1 ===
+Update on bill_payments  (cost=27.45..407.08 rows=0 width=0) (actual time=0.745..0.745 rows=0.00 loops=1)
+  Buffers: shared hit=1743 read=2 dirtied=2 written=2
+  ->  Bitmap Heap Scan on bill_payments  (cost=27.45..407.08 rows=1442 width=38) (actual time=0.027..0.155 rows=201.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=150
+        Buffers: shared hit=150 read=2
+        ->  Bitmap Index Scan on idx_bills_due_date  (cost=0.00..27.09 rows=1442 width=0) (actual time=0.018..0.018 rows=201.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared read=2
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.225 ms
+Execution Time: 0.783 ms
+=== W05 run 2 ===
+Update on bill_payments  (cost=27.52..409.26 rows=0 width=0) (actual time=0.878..0.878 rows=0.00 loops=1)
+  Buffers: shared hit=1786 dirtied=2 written=2
+  ->  Bitmap Heap Scan on bill_payments  (cost=27.52..409.26 rows=1450 width=38) (actual time=0.023..0.250 rows=201.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=150
+        Buffers: shared hit=152
+        ->  Bitmap Index Scan on idx_bills_due_date  (cost=0.00..27.15 rows=1450 width=0) (actual time=0.008..0.008 rows=201.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.264 ms
+Execution Time: 0.920 ms
+=== W05 run 3 ===
+Update on bill_payments  (cost=27.58..411.45 rows=0 width=0) (actual time=0.844..0.844 rows=0.00 loops=1)
+  Buffers: shared hit=1789 dirtied=3 written=3
+  ->  Bitmap Heap Scan on bill_payments  (cost=27.58..411.45 rows=1458 width=38) (actual time=0.018..0.250 rows=201.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=150
+        Buffers: shared hit=152
+        ->  Bitmap Index Scan on idx_bills_due_date  (cost=0.00..27.21 rows=1458 width=0) (actual time=0.007..0.007 rows=201.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.221 ms
+Execution Time: 0.880 ms
+=== W05 run 4 ===
+Update on bill_payments  (cost=27.67..414.72 rows=0 width=0) (actual time=0.827..0.827 rows=0.00 loops=1)
+  Buffers: shared hit=1787 dirtied=2 written=2
+  ->  Bitmap Heap Scan on bill_payments  (cost=27.67..414.72 rows=1470 width=38) (actual time=0.018..0.240 rows=201.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=150
+        Buffers: shared hit=152
+        ->  Bitmap Index Scan on idx_bills_due_date  (cost=0.00..27.30 rows=1470 width=0) (actual time=0.007..0.007 rows=201.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.214 ms
+Execution Time: 0.863 ms
+=== W05 run 5 ===
+Update on bill_payments  (cost=27.73..416.90 rows=0 width=0) (actual time=0.842..0.842 rows=0.00 loops=1)
+  Buffers: shared hit=1789 dirtied=2 written=2
+  ->  Bitmap Heap Scan on bill_payments  (cost=27.73..416.90 rows=1478 width=38) (actual time=0.019..0.252 rows=201.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=150
+        Buffers: shared hit=152
+        ->  Bitmap Index Scan on idx_bills_due_date  (cost=0.00..27.36 rows=1478 width=0) (actual time=0.007..0.007 rows=201.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=110
+Planning Time: 0.227 ms
+Execution Time: 0.878 ms
