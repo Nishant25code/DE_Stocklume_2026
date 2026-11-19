@@ -1,45 +1,24 @@
 === R11 run 1 ===
-Index Scan using idx_rewards_unscratched_expires on rewards  (cost=0.27..33.67 rows=480 width=16) (actual time=0.018..0.023 rows=51.00 loops=1)
+Index Scan using idx_rw_unscratched_expiry on rewards  (cost=0.28..35.01 rows=499 width=16) (actual time=0.012..0.018 rows=51 loops=1)
   Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
-  Index Searches: 1
   Buffers: shared hit=4 read=2
 Planning:
-  Buffers: shared hit=159
-Planning Time: 0.252 ms
-Execution Time: 0.038 ms
+  Buffers: shared hit=160
+Planning Time: 0.234 ms
+Execution Time: 0.032 ms
 === R11 run 2 ===
-Index Scan using idx_rewards_unscratched_expires on rewards  (cost=0.27..33.67 rows=480 width=16) (actual time=0.005..0.012 rows=51.00 loops=1)
+Index Scan using idx_rw_unscratched_expiry on rewards  (cost=0.28..35.01 rows=499 width=16) (actual time=0.011..0.021 rows=51 loops=1)
   Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
-  Index Searches: 1
   Buffers: shared hit=6
 Planning:
-  Buffers: shared hit=159
-Planning Time: 0.321 ms
-Execution Time: 0.026 ms
+  Buffers: shared hit=160
+Planning Time: 0.249 ms
+Execution Time: 0.043 ms
 === R11 run 3 ===
-Index Scan using idx_rewards_unscratched_expires on rewards  (cost=0.27..33.67 rows=480 width=16) (actual time=0.006..0.011 rows=51.00 loops=1)
+Index Scan using idx_rw_unscratched_expiry on rewards  (cost=0.28..35.01 rows=499 width=16) (actual time=0.013..0.024 rows=51 loops=1)
   Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
-  Index Searches: 1
   Buffers: shared hit=6
 Planning:
-  Buffers: shared hit=159
-Planning Time: 0.247 ms
-Execution Time: 0.025 ms
-=== R11 run 4 ===
-Index Scan using idx_rewards_unscratched_expires on rewards  (cost=0.27..33.67 rows=480 width=16) (actual time=0.006..0.011 rows=51.00 loops=1)
-  Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
-  Index Searches: 1
-  Buffers: shared hit=6
-Planning:
-  Buffers: shared hit=159
-Planning Time: 0.244 ms
-Execution Time: 0.024 ms
-=== R11 run 5 ===
-Index Scan using idx_rewards_unscratched_expires on rewards  (cost=0.27..33.67 rows=480 width=16) (actual time=0.005..0.011 rows=51.00 loops=1)
-  Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
-  Index Searches: 1
-  Buffers: shared hit=6
-Planning:
-  Buffers: shared hit=159
-Planning Time: 0.244 ms
-Execution Time: 0.024 ms
+  Buffers: shared hit=160
+Planning Time: 0.318 ms
+Execution Time: 0.049 ms

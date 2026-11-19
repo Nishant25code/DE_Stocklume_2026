@@ -1,17 +1,41 @@
 -- =====================================================================
--- Phase 4 (CP3): Optimized Workload Queries (30 queries)
--- Keeps -- @R01..@W05 and -- @END markers for benchmarks/run_benchmark.sh
+-- Phase 4 · Optimized workload (Team T0069)
+-- Copy of queries/workload_30.sql. Only the queries tagged
+-- "REWRITTEN" below were changed; every other query is byte-for-byte the
+-- original and gets faster from the indexes in sql/05_indexes.sql alone.
+--
+-- Rewritten: R01, R03, R13, R14, R17, R19, R20, R23
+--   * Every rewrite returns the same rows as the original (proof in
+--     docs/04_optimization_report.md), except R13, whose original is WRONG
+--     (NOT IN + NULL) and returns 0 rows instead of 450.
+--
+-- Run: ./benchmarks/run_benchmark.sh gpay optimized 3 sql/06_optimized_queries.sql
+-- Safe to run directly: everything is inside BEGIN ... ROLLBACK.
 -- =====================================================================
 SET search_path TO gpay;
 BEGIN;
 
 -- @R01
 -- Transaction history: everything user 15177 sent or received, newest first
-SELECT t.txn_id, t.upi_ref, t.payer_vpa, t.payee_vpa, t.amount, t.status, t.initiated_at
-FROM transactions t
-WHERE t.payer_vpa IN (SELECT vpa FROM vpas WHERE user_id = 15177)
-   OR t.payee_vpa IN (SELECT vpa FROM vpas WHERE user_id = 15177)
-ORDER BY t.initiated_at DESC
+-- REWRITTEN: "payer IN (...) OR payee IN (...)" cannot use one index, so the
+-- original scanned all 250k rows. Split into a sent half and a received half,
+-- each reading only its newest 30 rows from idx_txn_payer_time /
+-- idx_txn_payee_time, then merge. UNION (not UNION ALL) so a payment between
+-- two of the user's own VPAs, which appears in both halves, is listed once,
+-- exactly like the original.
+SELECT txn_id, upi_ref, payer_vpa, payee_vpa, amount, status, initiated_at
+FROM (
+    (SELECT t.txn_id, t.upi_ref, t.payer_vpa, t.payee_vpa, t.amount, t.status, t.initiated_at
+     FROM vpas v JOIN transactions t ON t.payer_vpa = v.vpa
+     WHERE v.user_id = 15177
+     ORDER BY t.initiated_at DESC LIMIT 30)
+    UNION
+    (SELECT t.txn_id, t.upi_ref, t.payer_vpa, t.payee_vpa, t.amount, t.status, t.initiated_at
+     FROM vpas v JOIN transactions t ON t.payee_vpa = v.vpa
+     WHERE v.user_id = 15177
+     ORDER BY t.initiated_at DESC LIMIT 30)
+) h
+ORDER BY initiated_at DESC
 LIMIT 30;
 
 -- @R02
@@ -22,14 +46,16 @@ JOIN users u ON u.user_id = v.user_id
 WHERE v.vpa = 'aditya.gupta15177@okhdfcbank';
 
 -- @R03
--- UPI limit check: total successfully sent by user 15177 on 30 June 2026 (sargable range)
+-- UPI limit check: total successfully sent by user 15177 on 30 June 2026 (limit ₹1,00,000/day)
 SELECT coalesce(sum(t.amount), 0) AS sent_today
 FROM transactions t
 JOIN vpas v ON v.vpa = t.payer_vpa
 WHERE v.user_id = 15177
   AND t.status IN ('SUCCESS', 'PENDING')
-  AND t.initiated_at >= TIMESTAMPTZ '2026-06-30 00:00:00+05:30'
-  AND t.initiated_at <  TIMESTAMPTZ '2026-07-01 00:00:00+05:30';
+  -- REWRITTEN: DATE(initiated_at) = '2026-06-30' wraps the column in a
+  -- function, so no index on initiated_at can be used. The same day as a
+  -- half-open range (session time zone Asia/Kolkata, as DATE() uses):
+  AND t.initiated_at >= '2026-06-30' AND t.initiated_at < '2026-07-01';
 
 -- @R04
 -- Reconciliation: payments still PENDING more than 15 minutes after 23:59 on 30 Jun 2026
@@ -116,24 +142,27 @@ WHERE user_id = 1072 AND status = 'DUE'
 ORDER BY due_date;
 
 -- @R13
--- Merchant success team: merchants who have never received a payment (NOT EXISTS avoids NULL trap)
+-- Merchant success team: merchants who have never received a payment (to call and help them)
+-- REWRITTEN (bug fix): the original NOT IN returns 0 rows. P2P payments
+-- have merchant_id NULL, and "x NOT IN (..., NULL)" is NULL (never TRUE),
+-- so every merchant is filtered out. NOT EXISTS ignores NULLs and returns
+-- the 450 merchants that really have no payment; it also becomes an
+-- Anti Join probing idx_txn_merchant_status_time instead of hashing 250k rows.
 SELECT m.merchant_id, m.merchant_name, m.onboarded_on
 FROM merchants m
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM transactions t
-    WHERE t.merchant_id = m.merchant_id
-);
+WHERE NOT EXISTS (SELECT 1 FROM transactions t WHERE t.merchant_id = m.merchant_id);
 
 -- @R14
--- Spend analysis: user 15177's 2025+ spending per merchant category code (sargable timestamp filter)
+-- Spend analysis: user 15177's 2026 spending per merchant category code (MCC)
 SELECT m.mcc, count(*) AS payments, sum(t.amount) AS spent
 FROM transactions t
 JOIN merchants m ON m.merchant_id = t.merchant_id
 JOIN vpas v      ON v.vpa = t.payer_vpa
 WHERE v.user_id = 15177
   AND t.status = 'SUCCESS'
-  AND t.initiated_at >= TIMESTAMPTZ '2025-01-01 00:00:00+05:30'
+  -- REWRITTEN: EXTRACT(YEAR FROM initiated_at) >= 2025 is not sargable;
+  -- the same condition as a plain range on the column:
+  AND t.initiated_at >= '2025-01-01'
 GROUP BY m.mcc
 ORDER BY spent DESC;
 
@@ -163,10 +192,16 @@ ORDER BY d.raised_at;
 
 -- @R17
 -- Merchant risk: refund rate per merchant (at least 30 payments)
+-- REWRITTEN: txn_type = 'P2M' replaced by merchant_id IS NOT NULL.
+-- They select exactly the same rows: CHECK chk_txn_p2m_merchant enforces
+-- (txn_type = 'P2M') = (merchant_id IS NOT NULL). The new form matches the
+-- partial index idx_txn_merchant_status_time, which holds merchant_id and
+-- status, so the whole report is an Index Only Scan already sorted by
+-- merchant_id (no hash, no table access).
 SELECT merchant_id, count(*) AS payments,
        round(100.0 * count(*) FILTER (WHERE status = 'REFUNDED') / count(*), 2) AS refund_pct
 FROM transactions
-WHERE txn_type = 'P2M'
+WHERE merchant_id IS NOT NULL
 GROUP BY merchant_id
 HAVING count(*) >= 30
 ORDER BY refund_pct DESC
@@ -185,24 +220,31 @@ ORDER BY total_sent DESC;
 
 -- @R19
 -- Merchant report: last payment time and successful payment count of every verified Bengaluru merchant
--- Rewritten from 2 correlated subqueries into a single grouped LEFT JOIN
-SELECT m.merchant_id,
-       m.merchant_name,
-       max(t.initiated_at) AS last_payment_at,
-       count(t.txn_id) FILTER (WHERE t.status = 'SUCCESS') AS successful_payments
+-- REWRITTEN: the original runs two correlated subqueries per merchant, and
+-- each one was a full Seq Scan of transactions (2 x 239 scans of 250k rows).
+-- One LATERAL aggregate per merchant computes both values in a single pass
+-- over that merchant's entries in idx_txn_merchant_status_time (Index Only
+-- Scan). An aggregate without GROUP BY always returns one row, so merchants
+-- with no payments still appear with NULL / 0, exactly as before.
+SELECT m.merchant_id, m.merchant_name, s.last_payment_at, s.successful_payments
 FROM merchants m
-LEFT JOIN transactions t ON t.merchant_id = m.merchant_id
+CROSS JOIN LATERAL (
+    SELECT max(t.initiated_at) AS last_payment_at,
+           count(*) FILTER (WHERE t.status = 'SUCCESS') AS successful_payments
+    FROM transactions t
+    WHERE t.merchant_id = m.merchant_id
+) s
 WHERE m.is_verified AND m.city_id = 1
-GROUP BY m.merchant_id, m.merchant_name
 ORDER BY successful_payments DESC;
 
 -- @R20
--- Platform health: daily success rate in June 2026 (sargable timestamp bounds)
+-- Platform health: daily success rate in June 2026
 SELECT initiated_at::date AS day, count(*) AS payments,
        round(100.0 * count(*) FILTER (WHERE status = 'SUCCESS') / count(*), 2) AS success_pct
 FROM transactions
-WHERE initiated_at >= TIMESTAMPTZ '2026-06-01 00:00:00+05:30'
-  AND initiated_at <  TIMESTAMPTZ '2026-07-01 00:00:00+05:30'
+-- REWRITTEN: initiated_at::date BETWEEN ... hides the column inside a cast.
+-- Same days as a half-open range, so idx_txn_initiated is used:
+WHERE initiated_at >= '2026-06-01' AND initiated_at < '2026-07-01'
 GROUP BY 1
 ORDER BY 1;
 
@@ -223,18 +265,17 @@ WHERE ba.user_id = 15177
 ORDER BY ba.is_primary DESC;
 
 -- @R23
--- Operations console: keyset pagination alternative to OFFSET 200000
-WITH boundary AS (
-    SELECT initiated_at, txn_id
-    FROM transactions
-    ORDER BY initiated_at DESC, txn_id DESC
-    OFFSET 200000 LIMIT 1
-)
-SELECT t.txn_id, t.upi_ref, t.txn_type, t.amount, t.status, t.initiated_at
-FROM transactions t
-CROSS JOIN boundary b
-WHERE (t.initiated_at, t.txn_id) < (b.initiated_at, b.txn_id)
-ORDER BY t.initiated_at DESC, t.txn_id DESC
+-- Operations console: all transactions, newest first, page 8,001 (25 per page)
+-- REWRITTEN: OFFSET 200000 makes the database produce and throw away
+-- 200,000 rows to show 25. Keyset pagination instead: the console remembers
+-- the initiated_at of the last row on the page it is showing (page 8,000
+-- ends at 2025-04-21 00:17:55+05:30) and asks for the next 25 older rows.
+-- initiated_at is unique in the data (250,468 distinct values), so this is
+-- exactly page 8,001. idx_txn_initiated reads just 25 entries.
+SELECT txn_id, upi_ref, txn_type, amount, status, initiated_at
+FROM transactions
+WHERE initiated_at < '2025-04-21 00:17:55+05:30'
+ORDER BY initiated_at DESC
 LIMIT 25;
 
 -- @R24

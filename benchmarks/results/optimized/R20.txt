@@ -1,85 +1,45 @@
 === R20 run 1 ===
-GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.379..2.041 rows=30.00 loops=1)
+GroupAggregate  (cost=1824.40..2332.41 rows=13547 width=44) (actual time=2.736..3.499 rows=30 loops=1)
   Group Key: ((initiated_at)::date)
-  Buffers: shared hit=90
-  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.350..1.582 rows=13764.00 loops=1)
+  Buffers: shared hit=351
+  ->  Sort  (cost=1824.40..1858.26 rows=13547 width=11) (actual time=2.703..2.971 rows=13764 loops=1)
         Sort Key: ((initiated_at)::date)
         Sort Method: quicksort  Memory: 815kB
-        Buffers: shared hit=90
-        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.947 rows=13764.00 loops=1)
+        Buffers: shared hit=351
+        ->  Index Scan using idx_txn_initiated on transactions  (cost=0.42..894.69 rows=13547 width=11) (actual time=0.011..2.161 rows=13764 loops=1)
               Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
-              Heap Fetches: 0
-              Index Searches: 1
-              Buffers: shared hit=87
+              Buffers: shared hit=348
 Planning:
-  Buffers: shared hit=319
-Planning Time: 0.405 ms
-Execution Time: 2.066 ms
+  Buffers: shared hit=302
+Planning Time: 0.549 ms
+Execution Time: 3.534 ms
 === R20 run 2 ===
-GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.373..2.030 rows=30.00 loops=1)
+GroupAggregate  (cost=1824.40..2332.41 rows=13547 width=44) (actual time=2.437..3.165 rows=30 loops=1)
   Group Key: ((initiated_at)::date)
-  Buffers: shared hit=90
-  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.345..1.570 rows=13764.00 loops=1)
+  Buffers: shared hit=351
+  ->  Sort  (cost=1824.40..1858.26 rows=13547 width=11) (actual time=2.403..2.647 rows=13764 loops=1)
         Sort Key: ((initiated_at)::date)
         Sort Method: quicksort  Memory: 815kB
-        Buffers: shared hit=90
-        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.006..0.931 rows=13764.00 loops=1)
+        Buffers: shared hit=351
+        ->  Index Scan using idx_txn_initiated on transactions  (cost=0.42..894.69 rows=13547 width=11) (actual time=0.010..1.918 rows=13764 loops=1)
               Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
-              Heap Fetches: 0
-              Index Searches: 1
-              Buffers: shared hit=87
+              Buffers: shared hit=348
 Planning:
-  Buffers: shared hit=319
-Planning Time: 0.415 ms
-Execution Time: 2.056 ms
+  Buffers: shared hit=302
+Planning Time: 0.426 ms
+Execution Time: 3.198 ms
 === R20 run 3 ===
-GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.369..2.026 rows=30.00 loops=1)
+GroupAggregate  (cost=1824.40..2332.41 rows=13547 width=44) (actual time=2.501..3.709 rows=30 loops=1)
   Group Key: ((initiated_at)::date)
-  Buffers: shared hit=90
-  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.341..1.564 rows=13764.00 loops=1)
+  Buffers: shared hit=351
+  ->  Sort  (cost=1824.40..1858.26 rows=13547 width=11) (actual time=2.447..2.860 rows=13764 loops=1)
         Sort Key: ((initiated_at)::date)
         Sort Method: quicksort  Memory: 815kB
-        Buffers: shared hit=90
-        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.940 rows=13764.00 loops=1)
+        Buffers: shared hit=351
+        ->  Index Scan using idx_txn_initiated on transactions  (cost=0.42..894.69 rows=13547 width=11) (actual time=0.009..1.958 rows=13764 loops=1)
               Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
-              Heap Fetches: 0
-              Index Searches: 1
-              Buffers: shared hit=87
+              Buffers: shared hit=348
 Planning:
-  Buffers: shared hit=319
-Planning Time: 0.413 ms
-Execution Time: 2.051 ms
-=== R20 run 4 ===
-GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.374..2.050 rows=30.00 loops=1)
-  Group Key: ((initiated_at)::date)
-  Buffers: shared hit=90
-  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.345..1.570 rows=13764.00 loops=1)
-        Sort Key: ((initiated_at)::date)
-        Sort Method: quicksort  Memory: 815kB
-        Buffers: shared hit=90
-        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.006..0.940 rows=13764.00 loops=1)
-              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
-              Heap Fetches: 0
-              Index Searches: 1
-              Buffers: shared hit=87
-Planning:
-  Buffers: shared hit=319
-Planning Time: 0.395 ms
-Execution Time: 2.074 ms
-=== R20 run 5 ===
-GroupAggregate  (cost=1585.61..2097.90 rows=13661 width=44) (actual time=1.394..2.052 rows=30.00 loops=1)
-  Group Key: ((initiated_at)::date)
-  Buffers: shared hit=90
-  ->  Sort  (cost=1585.61..1619.76 rows=13661 width=11) (actual time=1.367..1.590 rows=13764.00 loops=1)
-        Sort Key: ((initiated_at)::date)
-        Sort Method: quicksort  Memory: 815kB
-        Buffers: shared hit=90
-        ->  Index Only Scan using idx_txn_initiated_at on transactions  (cost=0.42..647.25 rows=13661 width=11) (actual time=0.005..0.962 rows=13764.00 loops=1)
-              Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
-              Heap Fetches: 0
-              Index Searches: 1
-              Buffers: shared hit=87
-Planning:
-  Buffers: shared hit=319
-Planning Time: 0.397 ms
-Execution Time: 2.077 ms
+  Buffers: shared hit=302
+Planning Time: 0.466 ms
+Execution Time: 3.741 ms

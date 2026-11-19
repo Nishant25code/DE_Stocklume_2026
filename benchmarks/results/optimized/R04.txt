@@ -1,65 +1,24 @@
 === R04 run 1 ===
-Sort  (cost=160.31..160.51 rows=83 width=59) (actual time=0.051..0.053 rows=120.00 loops=1)
-  Sort Key: initiated_at
-  Sort Method: quicksort  Memory: 34kB
-  Buffers: shared hit=12 read=1
-  ->  Index Scan using idx_txn_pending_txn_id on transactions  (cost=0.14..157.66 rows=83 width=59) (actual time=0.026..0.035 rows=120.00 loops=1)
-        Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
-        Index Searches: 1
-        Buffers: shared hit=9 read=1
+Index Scan using idx_txn_pending on transactions  (cost=0.14..17.45 rows=75 width=59) (actual time=0.025..0.047 rows=120 loops=1)
+  Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+  Buffers: shared hit=3 read=1
 Planning:
-  Buffers: shared hit=295
-Planning Time: 0.420 ms
-Execution Time: 0.066 ms
+  Buffers: shared hit=285
+Planning Time: 2.346 ms
+Execution Time: 0.069 ms
 === R04 run 2 ===
-Sort  (cost=160.31..160.51 rows=83 width=59) (actual time=0.042..0.045 rows=120.00 loops=1)
-  Sort Key: initiated_at
-  Sort Method: quicksort  Memory: 34kB
-  Buffers: shared hit=13
-  ->  Index Scan using idx_txn_pending_txn_id on transactions  (cost=0.14..157.66 rows=83 width=59) (actual time=0.017..0.026 rows=120.00 loops=1)
-        Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
-        Index Searches: 1
-        Buffers: shared hit=10
+Index Scan using idx_txn_pending on transactions  (cost=0.14..17.45 rows=75 width=59) (actual time=0.023..0.063 rows=120 loops=1)
+  Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+  Buffers: shared hit=4
 Planning:
-  Buffers: shared hit=295
-Planning Time: 0.423 ms
-Execution Time: 0.057 ms
+  Buffers: shared hit=285
+Planning Time: 1.973 ms
+Execution Time: 0.105 ms
 === R04 run 3 ===
-Sort  (cost=160.31..160.51 rows=83 width=59) (actual time=0.040..0.042 rows=120.00 loops=1)
-  Sort Key: initiated_at
-  Sort Method: quicksort  Memory: 34kB
-  Buffers: shared hit=13
-  ->  Index Scan using idx_txn_pending_txn_id on transactions  (cost=0.14..157.66 rows=83 width=59) (actual time=0.016..0.025 rows=120.00 loops=1)
-        Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
-        Index Searches: 1
-        Buffers: shared hit=10
+Index Scan using idx_txn_pending on transactions  (cost=0.14..17.45 rows=75 width=59) (actual time=0.015..0.054 rows=120 loops=1)
+  Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+  Buffers: shared hit=4
 Planning:
-  Buffers: shared hit=295
-Planning Time: 0.407 ms
-Execution Time: 0.054 ms
-=== R04 run 4 ===
-Sort  (cost=160.31..160.51 rows=83 width=59) (actual time=0.038..0.040 rows=120.00 loops=1)
-  Sort Key: initiated_at
-  Sort Method: quicksort  Memory: 34kB
-  Buffers: shared hit=13
-  ->  Index Scan using idx_txn_pending_txn_id on transactions  (cost=0.14..157.66 rows=83 width=59) (actual time=0.015..0.023 rows=120.00 loops=1)
-        Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
-        Index Searches: 1
-        Buffers: shared hit=10
-Planning:
-  Buffers: shared hit=295
-Planning Time: 0.375 ms
-Execution Time: 0.052 ms
-=== R04 run 5 ===
-Sort  (cost=160.31..160.51 rows=83 width=59) (actual time=0.039..0.041 rows=120.00 loops=1)
-  Sort Key: initiated_at
-  Sort Method: quicksort  Memory: 34kB
-  Buffers: shared hit=13
-  ->  Index Scan using idx_txn_pending_txn_id on transactions  (cost=0.14..157.66 rows=83 width=59) (actual time=0.016..0.025 rows=120.00 loops=1)
-        Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
-        Index Searches: 1
-        Buffers: shared hit=10
-Planning:
-  Buffers: shared hit=295
-Planning Time: 0.393 ms
-Execution Time: 0.054 ms
+  Buffers: shared hit=285
+Planning Time: 1.801 ms
+Execution Time: 0.084 ms

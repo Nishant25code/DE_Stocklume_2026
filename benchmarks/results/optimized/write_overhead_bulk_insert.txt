@@ -1,0 +1,94 @@
+# Bulk-insert test: 10,000 copied transactions inserted inside BEGIN ... ROLLBACK (data unchanged).
+# 'with'    = all 17 Phase 4 indexes present
+# 'without' = the 7 new transactions indexes dropped inside the same transaction (DROP INDEX is transactional, rolled back)
+# Statement: INSERT INTO transactions SELECT txn_id+900000000000, '9'||substr(upi_ref,2), txn_type, payer_vpa, payee_vpa, merchant_id, amount, note, initiated_at, completed_at, status, failure_code FROM transactions ORDER BY txn_id LIMIT 10000;
+=== with ===
+Insert on transactions  (cost=0.42..616.36 rows=0 width=0) (actual time=289.182..289.182 rows=0 loops=1)
+  Buffers: shared hit=230325 read=8 dirtied=316 written=302
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..616.36 rows=10000 width=145) (actual time=0.055..3.498 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..491.36 rows=10000 width=143) (actual time=0.053..2.942 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..18442.50 rows=375648 width=143) (actual time=0.050..2.534 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=296
+Planning Time: 2.010 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=59.052 calls=10000
+Trigger for constraint fk_txn_merchant: time=12.754 calls=10000
+Execution Time: 361.554 ms
+=== without ===
+Insert on transactions  (cost=0.42..614.27 rows=0 width=0) (actual time=73.718..73.718 rows=0 loops=1)
+  Buffers: shared hit=95584 dirtied=228 written=228
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..614.27 rows=10000 width=145) (actual time=0.012..2.931 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..489.27 rows=10000 width=143) (actual time=0.011..2.486 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..18846.69 rows=385523 width=143) (actual time=0.011..2.141 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=170
+Planning Time: 0.268 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=55.451 calls=10000
+Trigger for constraint fk_txn_merchant: time=12.435 calls=10000
+Execution Time: 142.105 ms
+=== with ===
+Insert on transactions  (cost=0.42..612.28 rows=0 width=0) (actual time=251.463..251.464 rows=0 loops=1)
+  Buffers: shared hit=230365 read=4 dirtied=347 written=434
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..612.28 rows=10000 width=145) (actual time=0.010..2.957 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..487.28 rows=10000 width=143) (actual time=0.010..2.477 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..19250.90 rows=395399 width=143) (actual time=0.009..2.128 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.413 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=55.049 calls=10000
+Trigger for constraint fk_txn_merchant: time=13.187 calls=10000
+Execution Time: 320.201 ms
+=== without ===
+Insert on transactions  (cost=0.42..610.39 rows=0 width=0) (actual time=97.594..97.594 rows=0 loops=1)
+  Buffers: shared hit=95556 read=1 dirtied=227 written=328
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..610.39 rows=10000 width=145) (actual time=0.010..3.132 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..485.39 rows=10000 width=143) (actual time=0.010..2.682 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..19655.09 rows=405274 width=143) (actual time=0.009..2.331 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=170
+Planning Time: 0.253 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=55.951 calls=10000
+Trigger for constraint fk_txn_merchant: time=13.161 calls=10000
+Execution Time: 167.223 ms
+=== with ===
+Insert on transactions  (cost=0.42..608.59 rows=0 width=0) (actual time=292.242..292.242 rows=0 loops=1)
+  Buffers: shared hit=230955 read=26 dirtied=656 written=1053
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..608.59 rows=10000 width=145) (actual time=0.010..3.064 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..483.59 rows=10000 width=143) (actual time=0.010..2.570 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..20059.30 rows=415150 width=143) (actual time=0.009..2.224 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=296
+Planning Time: 0.391 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=54.821 calls=10000
+Trigger for constraint fk_txn_merchant: time=13.799 calls=10000
+Execution Time: 361.349 ms
+=== without ===
+Insert on transactions  (cost=0.42..606.88 rows=0 width=0) (actual time=99.530..99.531 rows=0 loops=1)
+  Buffers: shared hit=95565 read=1 dirtied=220 written=324
+  ->  Subquery Scan on "*SELECT*"  (cost=0.42..606.88 rows=10000 width=145) (actual time=0.010..3.048 rows=10000 loops=1)
+        Buffers: shared hit=212
+        ->  Limit  (cost=0.42..481.88 rows=10000 width=143) (actual time=0.010..2.582 rows=10000 loops=1)
+              Buffers: shared hit=212
+              ->  Index Scan using transactions_pkey on transactions transactions_1  (cost=0.42..20463.49 rows=425025 width=143) (actual time=0.010..2.238 rows=10000 loops=1)
+                    Buffers: shared hit=212
+Planning:
+  Buffers: shared hit=170
+Planning Time: 0.255 ms
+Trigger for constraint transactions_payer_vpa_fkey: time=55.513 calls=10000
+Trigger for constraint fk_txn_merchant: time=13.171 calls=10000
+Execution Time: 168.708 ms

@@ -1,45 +1,24 @@
 === R24 run 1 ===
-Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.015..0.015 rows=1.00 loops=1)
+Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.076..0.077 rows=1 loops=1)
   Index Cond: ((upi_ref)::text = '600977648064'::text)
-  Index Searches: 1
   Buffers: shared hit=4
 Planning:
   Buffers: shared hit=265
-Planning Time: 0.386 ms
-Execution Time: 0.030 ms
+Planning Time: 1.976 ms
+Execution Time: 0.121 ms
 === R24 run 2 ===
-Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.015..0.015 rows=1.00 loops=1)
+Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.077..0.078 rows=1 loops=1)
   Index Cond: ((upi_ref)::text = '600977648064'::text)
-  Index Searches: 1
   Buffers: shared hit=4
 Planning:
   Buffers: shared hit=265
-Planning Time: 0.388 ms
-Execution Time: 0.030 ms
+Planning Time: 1.275 ms
+Execution Time: 0.130 ms
 === R24 run 3 ===
-Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.015..0.015 rows=1.00 loops=1)
+Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.104..0.105 rows=1 loops=1)
   Index Cond: ((upi_ref)::text = '600977648064'::text)
-  Index Searches: 1
   Buffers: shared hit=4
 Planning:
   Buffers: shared hit=265
-Planning Time: 0.373 ms
-Execution Time: 0.029 ms
-=== R24 run 4 ===
-Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.015..0.015 rows=1.00 loops=1)
-  Index Cond: ((upi_ref)::text = '600977648064'::text)
-  Index Searches: 1
-  Buffers: shared hit=4
-Planning:
-  Buffers: shared hit=265
-Planning Time: 0.388 ms
-Execution Time: 0.030 ms
-=== R24 run 5 ===
-Index Scan using transactions_upi_ref_key on transactions  (cost=0.42..8.44 rows=1 width=85) (actual time=0.014..0.014 rows=1.00 loops=1)
-  Index Cond: ((upi_ref)::text = '600977648064'::text)
-  Index Searches: 1
-  Buffers: shared hit=4
-Planning:
-  Buffers: shared hit=265
-Planning Time: 0.358 ms
-Execution Time: 0.028 ms
+Planning Time: 2.031 ms
+Execution Time: 0.171 ms
