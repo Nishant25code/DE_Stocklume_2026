@@ -1,0 +1,224 @@
+# Output of: psql -d gpay -f sql/08_partitioning.sql   (seed data, PostgreSQL 17.12, MacBook Air M4)
+psql:sql/08_partitioning.sql:49: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to table gpay_part.transactions
+drop cascades to table gpay_part.upi_refs
+      partition       | rows  
+----------------------+-------
+ transactions_2025_01 | 14221
+ transactions_2025_02 | 12846
+ transactions_2025_03 | 14220
+ transactions_2025_04 | 13763
+ transactions_2025_05 | 14220
+ transactions_2025_06 | 13762
+ transactions_2025_07 | 14222
+ transactions_2025_08 | 14222
+ transactions_2025_09 | 13764
+ transactions_2025_10 | 14221
+ transactions_2025_11 | 13760
+ transactions_2025_12 | 14220
+ transactions_2026_01 | 14220
+ transactions_2026_02 | 12845
+ transactions_2026_03 | 14220
+ transactions_2026_04 | 13762
+ transactions_2026_05 | 14216
+ transactions_2026_06 | 13764
+(18 rows)
+
+ rows_original | rows_partitioned | rows_in_default 
+---------------+------------------+-----------------
+        250468 |           250468 |               0
+(1 row)
+
+                                                                                      QUERY PLAN                                                                                      
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual rows=204 loops=1)
+   Sort Key: (sum(t.amount)) DESC
+   Sort Method: quicksort  Memory: 36kB
+   ->  HashAggregate (actual rows=204 loops=1)
+         Group Key: m.merchant_id
+         Batches: 1  Memory Usage: 157kB
+         ->  Hash Join (actual rows=220 loops=1)
+               Hash Cond: (t.merchant_id = m.merchant_id)
+               ->  Index Scan using transactions_2026_06_initiated_at_idx on transactions_2026_06 t (actual rows=423 loops=1)
+                     Index Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                     Filter: ((status)::text = 'SUCCESS'::text)
+                     Rows Removed by Filter: 37
+               ->  Hash (actual rows=3000 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 196kB
+                     ->  Seq Scan on merchants m (actual rows=3000 loops=1)
+(15 rows)
+
+                                                                                 QUERY PLAN                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual rows=30 loops=1)
+   Group Key: ((transactions.initiated_at)::date)
+   ->  Sort (actual rows=13764 loops=1)
+         Sort Key: ((transactions.initiated_at)::date)
+         Sort Method: quicksort  Memory: 815kB
+         ->  Seq Scan on transactions_2026_06 transactions (actual rows=13764 loops=1)
+               Filter: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+(7 rows)
+
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Append (actual rows=135 loops=1)
+         ->  Index Scan using transactions_2026_06_initiated_at_idx on transactions_2026_06 t_1 (actual rows=135 loops=1)
+               Index Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+               Filter: ((status)::text = 'FAILED'::text)
+               Rows Removed by Filter: 3076
+         ->  Seq Scan on transactions_2026_07 t_2 (actual rows=0 loops=1)
+               Filter: ((initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'FAILED'::text))
+         ->  Seq Scan on transactions_2026_08 t_3 (actual rows=0 loops=1)
+               Filter: ((initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'FAILED'::text))
+         ->  Seq Scan on transactions_2026_09 t_4 (actual rows=0 loops=1)
+               Filter: ((initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'FAILED'::text))
+         ->  Seq Scan on transactions_default t_5 (actual rows=0 loops=1)
+               Filter: ((initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'FAILED'::text))
+(14 rows)
+
+                                                                            QUERY PLAN                                                                            
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate (actual rows=1 loops=1)
+   ->  Gather (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate (actual rows=1 loops=3)
+               ->  Parallel Append (actual rows=4588 loops=3)
+                     ->  Seq Scan on transactions_2026_07 transactions_19 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                     ->  Seq Scan on transactions_2026_08 transactions_20 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                     ->  Seq Scan on transactions_2026_09 transactions_21 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                     ->  Seq Scan on transactions_default transactions_22 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                     ->  Parallel Index Only Scan using transactions_2025_07_initiated_at_idx on transactions_2025_07 transactions_7 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14222
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_08_initiated_at_idx on transactions_2025_08 transactions_8 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14222
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_01_initiated_at_idx on transactions_2025_01 transactions_1 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14221
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_10_initiated_at_idx on transactions_2025_10 transactions_10 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14221
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_03_initiated_at_idx on transactions_2025_03 transactions_3 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14220
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_05_initiated_at_idx on transactions_2025_05 transactions_5 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14220
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_12_initiated_at_idx on transactions_2025_12 transactions_12 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14220
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_01_initiated_at_idx on transactions_2026_01 transactions_13 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 14220
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_03_initiated_at_idx on transactions_2026_03 transactions_15 (actual rows=0 loops=3)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 4740
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_05_initiated_at_idx on transactions_2026_05 transactions_17 (actual rows=0 loops=2)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 7108
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_09_initiated_at_idx on transactions_2025_09 transactions_9 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 13764
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_06_initiated_at_idx on transactions_2026_06 transactions_18 (actual rows=13764 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_04_initiated_at_idx on transactions_2025_04 transactions_4 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 13763
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_06_initiated_at_idx on transactions_2025_06 transactions_6 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 13762
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_04_initiated_at_idx on transactions_2026_04 transactions_16 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 13762
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_11_initiated_at_idx on transactions_2025_11 transactions_11 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 13760
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2025_02_initiated_at_idx on transactions_2025_02 transactions_2 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 12846
+                           Heap Fetches: 0
+                     ->  Parallel Index Only Scan using transactions_2026_02_initiated_at_idx on transactions_2026_02 transactions_14 (actual rows=0 loops=1)
+                           Filter: (((initiated_at)::date >= '2026-06-01'::date) AND ((initiated_at)::date <= '2026-06-30'::date))
+                           Rows Removed by Filter: 12845
+                           Heap Fetches: 0
+(85 rows)
+
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Append (actual rows=1 loops=1)
+   ->  Index Scan using transactions_2025_01_upi_ref_initiated_at_key on transactions_2025_01 transactions_1 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_02_upi_ref_initiated_at_key on transactions_2025_02 transactions_2 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_03_upi_ref_initiated_at_key on transactions_2025_03 transactions_3 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_04_upi_ref_initiated_at_key on transactions_2025_04 transactions_4 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_05_upi_ref_initiated_at_key on transactions_2025_05 transactions_5 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_06_upi_ref_initiated_at_key on transactions_2025_06 transactions_6 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_07_upi_ref_initiated_at_key on transactions_2025_07 transactions_7 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_08_upi_ref_initiated_at_key on transactions_2025_08 transactions_8 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_09_upi_ref_initiated_at_key on transactions_2025_09 transactions_9 (actual rows=1 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_10_upi_ref_initiated_at_key on transactions_2025_10 transactions_10 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_11_upi_ref_initiated_at_key on transactions_2025_11 transactions_11 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2025_12_upi_ref_initiated_at_key on transactions_2025_12 transactions_12 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_01_upi_ref_initiated_at_key on transactions_2026_01 transactions_13 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_02_upi_ref_initiated_at_key on transactions_2026_02 transactions_14 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_03_upi_ref_initiated_at_key on transactions_2026_03 transactions_15 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_04_upi_ref_initiated_at_key on transactions_2026_04 transactions_16 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_05_upi_ref_initiated_at_key on transactions_2026_05 transactions_17 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Index Scan using transactions_2026_06_upi_ref_initiated_at_key on transactions_2026_06 transactions_18 (actual rows=0 loops=1)
+         Index Cond: ((upi_ref)::text = '600977648064'::text)
+   ->  Seq Scan on transactions_2026_07 transactions_19 (actual rows=0 loops=1)
+         Filter: ((upi_ref)::text = '600977648064'::text)
+   ->  Seq Scan on transactions_2026_08 transactions_20 (actual rows=0 loops=1)
+         Filter: ((upi_ref)::text = '600977648064'::text)
+   ->  Seq Scan on transactions_2026_09 transactions_21 (actual rows=0 loops=1)
+         Filter: ((upi_ref)::text = '600977648064'::text)
+   ->  Seq Scan on transactions_default transactions_22 (actual rows=0 loops=1)
+         Filter: ((upi_ref)::text = '600977648064'::text)
+(45 rows)
+
+                                                QUERY PLAN                                                
+----------------------------------------------------------------------------------------------------------
+ Index Scan using transactions_2025_09_initiated_at_idx on transactions_2025_09 t (actual rows=1 loops=1)
+   Index Cond: (initiated_at = '2025-09-27 15:01:02+05:30'::timestamp with time zone)
+   Filter: ((upi_ref)::text = '600977648064'::text)
+(3 rows)
+
