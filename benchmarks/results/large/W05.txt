@@ -1,0 +1,45 @@
+=== W05 run 1 ===
+Update on bill_payments  (cost=335.52..7908.58 rows=0 width=0) (actual time=325.967..325.968 rows=0.00 loops=1)
+  Buffers: shared hit=33672 read=4508 dirtied=4543 written=47
+  ->  Bitmap Heap Scan on bill_payments  (cost=335.52..7908.58 rows=28804 width=38) (actual time=0.660..6.801 rows=4020.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=2981
+        Buffers: shared read=2986
+        ->  Bitmap Index Scan on idx_bill_due_date  (cost=0.00..328.32 rows=28804 width=0) (actual time=0.453..0.453 rows=4020.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared read=5
+Planning:
+  Buffers: shared hit=110 read=5
+Planning Time: 0.331 ms
+Execution Time: 326.022 ms
+=== W05 run 2 ===
+Update on bill_payments  (cost=336.98..7959.88 rows=0 width=0) (actual time=20.754..20.754 rows=0.00 loops=1)
+  Buffers: shared hit=39209 dirtied=47 written=47
+  ->  Bitmap Heap Scan on bill_payments  (cost=336.98..7959.88 rows=28993 width=38) (actual time=0.354..4.694 rows=4020.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=2981
+        Buffers: shared hit=2986
+        ->  Bitmap Index Scan on idx_bill_due_date  (cost=0.00..329.74 rows=28993 width=0) (actual time=0.169..0.169 rows=4020.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=115
+Planning Time: 0.279 ms
+Execution Time: 20.801 ms
+=== W05 run 3 ===
+Update on bill_payments  (cost=342.46..8015.20 rows=0 width=0) (actual time=15.575..15.575 rows=0.00 loops=1)
+  Buffers: shared hit=39252 dirtied=47 written=47
+  ->  Bitmap Heap Scan on bill_payments  (cost=342.46..8015.20 rows=29183 width=38) (actual time=0.354..4.438 rows=4020.00 loops=1)
+        Recheck Cond: ((due_date < '2026-07-05'::date) AND ((status)::text = 'DUE'::text))
+        Heap Blocks: exact=2981
+        Buffers: shared hit=2986
+        ->  Bitmap Index Scan on idx_bill_due_date  (cost=0.00..335.16 rows=29183 width=0) (actual time=0.171..0.171 rows=4020.00 loops=1)
+              Index Cond: (due_date < '2026-07-05'::date)
+              Index Searches: 1
+              Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=115
+Planning Time: 0.264 ms
+Execution Time: 15.620 ms

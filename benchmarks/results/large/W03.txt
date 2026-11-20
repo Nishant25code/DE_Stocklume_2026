@@ -1,0 +1,54 @@
+=== W03 run 1 ===
+Update on rewards  (cost=8.74..16.76 rows=0 width=0) (actual time=1.132..1.133 rows=0.00 loops=1)
+  Buffers: shared hit=44 read=15 dirtied=5
+  InitPlan 1
+    ->  Aggregate  (cost=8.30..8.31 rows=1 width=4) (actual time=0.026..0.026 rows=1.00 loops=1)
+          Buffers: shared read=4
+          ->  Index Scan using idx_rw_unscratched_user on rewards rewards_1  (cost=0.29..8.30 rows=1 width=4) (actual time=0.017..0.020 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Index Searches: 1
+                Buffers: shared read=4
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.42..8.44 rows=1 width=54) (actual time=0.374..0.374 rows=1.00 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=1 read=7
+Planning:
+  Buffers: shared hit=173 read=8
+Planning Time: 0.434 ms
+Execution Time: 1.185 ms
+=== W03 run 2 ===
+Update on rewards  (cost=8.74..16.76 rows=0 width=0) (actual time=0.149..0.149 rows=0.00 loops=1)
+  Buffers: shared hit=61
+  InitPlan 1
+    ->  Aggregate  (cost=8.30..8.31 rows=1 width=4) (actual time=0.012..0.013 rows=1.00 loops=1)
+          Buffers: shared hit=4
+          ->  Index Scan using idx_rw_unscratched_user on rewards rewards_1  (cost=0.29..8.30 rows=1 width=4) (actual time=0.007..0.008 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Index Searches: 1
+                Buffers: shared hit=4
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.42..8.44 rows=1 width=54) (actual time=0.023..0.024 rows=1.00 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=181
+Planning Time: 0.329 ms
+Execution Time: 0.210 ms
+=== W03 run 3 ===
+Update on rewards  (cost=8.74..16.76 rows=0 width=0) (actual time=0.148..0.148 rows=0.00 loops=1)
+  Buffers: shared hit=61
+  InitPlan 1
+    ->  Aggregate  (cost=8.30..8.31 rows=1 width=4) (actual time=0.013..0.013 rows=1.00 loops=1)
+          Buffers: shared hit=4
+          ->  Index Scan using idx_rw_unscratched_user on rewards rewards_1  (cost=0.29..8.30 rows=1 width=4) (actual time=0.007..0.008 rows=2.00 loops=1)
+                Index Cond: (user_id = 15177)
+                Index Searches: 1
+                Buffers: shared hit=4
+  ->  Index Scan using rewards_pkey on rewards  (cost=0.42..8.44 rows=1 width=54) (actual time=0.024..0.025 rows=1.00 loops=1)
+        Index Cond: (reward_id = (InitPlan 1).col1)
+        Index Searches: 1
+        Buffers: shared hit=10
+Planning:
+  Buffers: shared hit=181
+Planning Time: 0.316 ms
+Execution Time: 0.201 ms

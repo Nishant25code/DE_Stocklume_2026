@@ -1,0 +1,45 @@
+=== R02 run 1 ===
+Nested Loop  (cost=0.85..16.89 rows=1 width=41) (actual time=0.591..0.593 rows=1.00 loops=1)
+  Buffers: shared hit=3 read=5
+  ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..8.45 rows=1 width=33) (actual time=0.280..0.281 rows=1.00 loops=1)
+        Index Cond: ((vpa)::text = 'aditya.gupta15177@okhdfcbank'::text)
+        Index Searches: 1
+        Buffers: shared hit=1 read=3
+  ->  Index Scan using users_pkey on users u  (cost=0.42..8.44 rows=1 width=16) (actual time=0.307..0.307 rows=1.00 loops=1)
+        Index Cond: (user_id = v.user_id)
+        Index Searches: 1
+        Buffers: shared hit=2 read=2
+Planning:
+  Buffers: shared hit=268 read=13
+Planning Time: 2.469 ms
+Execution Time: 0.632 ms
+=== R02 run 2 ===
+Nested Loop  (cost=0.85..16.89 rows=1 width=41) (actual time=0.032..0.032 rows=1.00 loops=1)
+  Buffers: shared hit=8
+  ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..8.45 rows=1 width=33) (actual time=0.020..0.021 rows=1.00 loops=1)
+        Index Cond: ((vpa)::text = 'aditya.gupta15177@okhdfcbank'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+  ->  Index Scan using users_pkey on users u  (cost=0.42..8.44 rows=1 width=16) (actual time=0.009..0.009 rows=1.00 loops=1)
+        Index Cond: (user_id = v.user_id)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=281
+Planning Time: 1.103 ms
+Execution Time: 0.076 ms
+=== R02 run 3 ===
+Nested Loop  (cost=0.85..16.89 rows=1 width=41) (actual time=0.025..0.026 rows=1.00 loops=1)
+  Buffers: shared hit=8
+  ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..8.45 rows=1 width=33) (actual time=0.015..0.016 rows=1.00 loops=1)
+        Index Cond: ((vpa)::text = 'aditya.gupta15177@okhdfcbank'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+  ->  Index Scan using users_pkey on users u  (cost=0.42..8.44 rows=1 width=16) (actual time=0.007..0.007 rows=1.00 loops=1)
+        Index Cond: (user_id = v.user_id)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=281
+Planning Time: 0.796 ms
+Execution Time: 0.060 ms

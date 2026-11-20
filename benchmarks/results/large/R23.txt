@@ -1,0 +1,33 @@
+=== R23 run 1 ===
+Limit  (cost=0.43..2.95 rows=25 width=46) (actual time=0.009..0.048 rows=25.00 loops=1)
+  Buffers: shared hit=28
+  ->  Index Scan Backward using idx_txn_initiated on transactions  (cost=0.43..483296.92 rows=4806480 width=46) (actual time=0.009..0.047 rows=25.00 loops=1)
+        Index Cond: (initiated_at < '2026-06-09 04:53:17+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=28
+Planning:
+  Buffers: shared hit=283
+Planning Time: 0.398 ms
+Execution Time: 0.067 ms
+=== R23 run 2 ===
+Limit  (cost=0.43..2.95 rows=25 width=46) (actual time=0.007..0.037 rows=25.00 loops=1)
+  Buffers: shared hit=28
+  ->  Index Scan Backward using idx_txn_initiated on transactions  (cost=0.43..483296.92 rows=4806480 width=46) (actual time=0.007..0.036 rows=25.00 loops=1)
+        Index Cond: (initiated_at < '2026-06-09 04:53:17+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=28
+Planning:
+  Buffers: shared hit=283
+Planning Time: 0.368 ms
+Execution Time: 0.054 ms
+=== R23 run 3 ===
+Limit  (cost=0.43..2.95 rows=25 width=46) (actual time=0.008..0.037 rows=25.00 loops=1)
+  Buffers: shared hit=28
+  ->  Index Scan Backward using idx_txn_initiated on transactions  (cost=0.43..483296.92 rows=4806480 width=46) (actual time=0.008..0.036 rows=25.00 loops=1)
+        Index Cond: (initiated_at < '2026-06-09 04:53:17+05:30'::timestamp with time zone)
+        Index Searches: 1
+        Buffers: shared hit=28
+Planning:
+  Buffers: shared hit=283
+Planning Time: 0.373 ms
+Execution Time: 0.055 ms

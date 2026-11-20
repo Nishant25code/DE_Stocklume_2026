@@ -1,0 +1,27 @@
+=== R10 run 1 ===
+Index Scan using idx_rw_unscratched_user on rewards  (cost=0.29..8.30 rows=1 width=30) (actual time=0.144..0.148 rows=2.00 loops=1)
+  Index Cond: ((user_id = 15177) AND (expires_at > '2026-06-30 23:59:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared read=4
+Planning:
+  Buffers: shared hit=146 read=35 dirtied=3
+Planning Time: 0.759 ms
+Execution Time: 0.172 ms
+=== R10 run 2 ===
+Index Scan using idx_rw_unscratched_user on rewards  (cost=0.29..8.30 rows=1 width=30) (actual time=0.005..0.006 rows=2.00 loops=1)
+  Index Cond: ((user_id = 15177) AND (expires_at > '2026-06-30 23:59:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=181
+Planning Time: 0.282 ms
+Execution Time: 0.031 ms
+=== R10 run 3 ===
+Index Scan using idx_rw_unscratched_user on rewards  (cost=0.29..8.30 rows=1 width=30) (actual time=0.005..0.007 rows=2.00 loops=1)
+  Index Cond: ((user_id = 15177) AND (expires_at > '2026-06-30 23:59:00+05:30'::timestamp with time zone))
+  Index Searches: 1
+  Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=181
+Planning Time: 0.311 ms
+Execution Time: 0.034 ms

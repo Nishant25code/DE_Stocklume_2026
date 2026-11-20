@@ -1,0 +1,78 @@
+=== R19 run 1 ===
+Sort  (cost=31658.12..31670.34 rows=4889 width=39) (actual time=34.009..34.114 rows=4780.00 loops=1)
+  Sort Key: (count(*) FILTER (WHERE ((t.status)::text = 'SUCCESS'::text))) DESC
+  Sort Method: quicksort  Memory: 465kB
+  Buffers: shared hit=12463 read=5452
+  ->  Nested Loop  (cost=64.41..31358.54 rows=4889 width=39) (actual time=0.701..33.461 rows=4780.00 loops=1)
+        Buffers: shared hit=12460 read=5452
+        ->  Bitmap Heap Scan on merchants m  (cost=58.18..802.29 rows=4889 width=23) (actual time=0.615..1.722 rows=4780.00 loops=1)
+              Recheck Cond: ((city_id = 1) AND is_verified)
+              Heap Blocks: exact=683
+              Buffers: shared hit=3 read=689
+              ->  Bitmap Index Scan on idx_merchants_city_verified  (cost=0.00..56.95 rows=4889 width=0) (actual time=0.557..0.557 rows=4780.00 loops=1)
+                    Index Cond: (city_id = 1)
+                    Index Searches: 1
+                    Buffers: shared hit=3 read=6
+        ->  Aggregate  (cost=6.23..6.24 rows=1 width=16) (actual time=0.007..0.007 rows=1.00 loops=4780)
+              Buffers: shared hit=12457 read=4763
+              ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..5.69 rows=72 width=15) (actual time=0.002..0.005 rows=57.54 loops=4780)
+                    Index Cond: (merchant_id = m.merchant_id)
+                    Heap Fetches: 0
+                    Index Searches: 4780
+                    Buffers: shared hit=12457 read=4763
+Planning:
+  Buffers: shared hit=442 read=11
+Planning Time: 0.745 ms
+Execution Time: 34.245 ms
+=== R19 run 2 ===
+Sort  (cost=31658.12..31670.34 rows=4889 width=39) (actual time=27.318..27.416 rows=4780.00 loops=1)
+  Sort Key: (count(*) FILTER (WHERE ((t.status)::text = 'SUCCESS'::text))) DESC
+  Sort Method: quicksort  Memory: 465kB
+  Buffers: shared hit=17915
+  ->  Nested Loop  (cost=64.41..31358.54 rows=4889 width=39) (actual time=0.194..26.864 rows=4780.00 loops=1)
+        Buffers: shared hit=17912
+        ->  Bitmap Heap Scan on merchants m  (cost=58.18..802.29 rows=4889 width=23) (actual time=0.117..0.869 rows=4780.00 loops=1)
+              Recheck Cond: ((city_id = 1) AND is_verified)
+              Heap Blocks: exact=683
+              Buffers: shared hit=692
+              ->  Bitmap Index Scan on idx_merchants_city_verified  (cost=0.00..56.95 rows=4889 width=0) (actual time=0.079..0.079 rows=4780.00 loops=1)
+                    Index Cond: (city_id = 1)
+                    Index Searches: 1
+                    Buffers: shared hit=9
+        ->  Aggregate  (cost=6.23..6.24 rows=1 width=16) (actual time=0.005..0.005 rows=1.00 loops=4780)
+              Buffers: shared hit=17220
+              ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..5.69 rows=72 width=15) (actual time=0.002..0.004 rows=57.54 loops=4780)
+                    Index Cond: (merchant_id = m.merchant_id)
+                    Heap Fetches: 0
+                    Index Searches: 4780
+                    Buffers: shared hit=17220
+Planning:
+  Buffers: shared hit=453
+Planning Time: 0.571 ms
+Execution Time: 27.540 ms
+=== R19 run 3 ===
+Sort  (cost=31658.12..31670.34 rows=4889 width=39) (actual time=26.867..26.969 rows=4780.00 loops=1)
+  Sort Key: (count(*) FILTER (WHERE ((t.status)::text = 'SUCCESS'::text))) DESC
+  Sort Method: quicksort  Memory: 465kB
+  Buffers: shared hit=17915
+  ->  Nested Loop  (cost=64.41..31358.54 rows=4889 width=39) (actual time=0.182..26.393 rows=4780.00 loops=1)
+        Buffers: shared hit=17912
+        ->  Bitmap Heap Scan on merchants m  (cost=58.18..802.29 rows=4889 width=23) (actual time=0.112..0.851 rows=4780.00 loops=1)
+              Recheck Cond: ((city_id = 1) AND is_verified)
+              Heap Blocks: exact=683
+              Buffers: shared hit=692
+              ->  Bitmap Index Scan on idx_merchants_city_verified  (cost=0.00..56.95 rows=4889 width=0) (actual time=0.073..0.073 rows=4780.00 loops=1)
+                    Index Cond: (city_id = 1)
+                    Index Searches: 1
+                    Buffers: shared hit=9
+        ->  Aggregate  (cost=6.23..6.24 rows=1 width=16) (actual time=0.005..0.005 rows=1.00 loops=4780)
+              Buffers: shared hit=17220
+              ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..5.69 rows=72 width=15) (actual time=0.002..0.004 rows=57.54 loops=4780)
+                    Index Cond: (merchant_id = m.merchant_id)
+                    Heap Fetches: 0
+                    Index Searches: 4780
+                    Buffers: shared hit=17220
+Planning:
+  Buffers: shared hit=453
+Planning Time: 0.546 ms
+Execution Time: 27.097 ms

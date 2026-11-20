@@ -1,0 +1,45 @@
+=== W04 run 1 ===
+Update on rewards  (cost=227.50..10083.18 rows=0 width=0) (actual time=12.735..12.735 rows=0.00 loops=1)
+  Buffers: shared hit=12365 read=170 dirtied=191 written=27
+  ->  Bitmap Heap Scan on rewards  (cost=227.50..10083.18 rows=9189 width=46) (actual time=0.074..0.212 rows=1020.00 loops=1)
+        Recheck Cond: ((expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'UNSCRATCHED'::text))
+        Heap Blocks: exact=69
+        Buffers: shared read=74
+        ->  Bitmap Index Scan on idx_rw_unscratched_expiry  (cost=0.00..225.20 rows=9189 width=0) (actual time=0.038..0.038 rows=1020.00 loops=1)
+              Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
+              Index Searches: 1
+              Buffers: shared read=5
+Planning:
+  Buffers: shared hit=143
+Planning Time: 0.294 ms
+Execution Time: 12.791 ms
+=== W04 run 2 ===
+Update on rewards  (cost=227.58..10094.66 rows=0 width=0) (actual time=3.855..3.855 rows=0.00 loops=1)
+  Buffers: shared hit=13936 read=2 dirtied=18 written=16
+  ->  Bitmap Heap Scan on rewards  (cost=227.58..10094.66 rows=9199 width=46) (actual time=0.038..0.200 rows=1020.00 loops=1)
+        Recheck Cond: ((expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'UNSCRATCHED'::text))
+        Heap Blocks: exact=69
+        Buffers: shared hit=74
+        ->  Bitmap Index Scan on idx_rw_unscratched_expiry  (cost=0.00..225.28 rows=9199 width=0) (actual time=0.023..0.024 rows=1020.00 loops=1)
+              Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
+              Index Searches: 1
+              Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=143
+Planning Time: 0.301 ms
+Execution Time: 3.901 ms
+=== W04 run 3 ===
+Update on rewards  (cost=227.67..10107.34 rows=0 width=0) (actual time=3.487..3.487 rows=0.00 loops=1)
+  Buffers: shared hit=14892 dirtied=12 written=12
+  ->  Bitmap Heap Scan on rewards  (cost=227.67..10107.34 rows=9211 width=46) (actual time=0.036..0.205 rows=1020.00 loops=1)
+        Recheck Cond: ((expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone) AND ((status)::text = 'UNSCRATCHED'::text))
+        Heap Blocks: exact=69
+        Buffers: shared hit=74
+        ->  Bitmap Index Scan on idx_rw_unscratched_expiry  (cost=0.00..225.37 rows=9211 width=0) (actual time=0.023..0.023 rows=1020.00 loops=1)
+              Index Cond: (expires_at < '2026-07-04 00:00:00+05:30'::timestamp with time zone)
+              Index Searches: 1
+              Buffers: shared hit=5
+Planning:
+  Buffers: shared hit=143
+Planning Time: 0.285 ms
+Execution Time: 3.530 ms

@@ -1,0 +1,147 @@
+=== R07 run 1 ===
+Sort  (cost=103201.99..103202.11 rows=48 width=25) (actual time=62.577..63.523 rows=41.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=15245 read=7735 written=170
+  ->  Finalize GroupAggregate  (cost=103172.25..103200.65 rows=48 width=25) (actual time=62.445..63.514 rows=41.00 loops=1)
+        Group Key: ba.bank_name, t.failure_code
+        Buffers: shared hit=15242 read=7735 written=170
+        ->  Gather Merge  (cost=103172.25..103199.31 rows=115 width=25) (actual time=62.440..63.493 rows=123.00 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=15242 read=7735 written=170
+              ->  Partial GroupAggregate  (cost=102172.22..102186.01 rows=48 width=25) (actual time=58.839..58.933 rows=41.00 loops=3)
+                    Group Key: ba.bank_name, t.failure_code
+                    Buffers: shared hit=15242 read=7735 written=170
+                    ->  Sort  (cost=102172.22..102175.55 rows=1331 width=17) (actual time=58.835..58.856 rows=900.00 loops=3)
+                          Sort Key: ba.bank_name, t.failure_code
+                          Sort Method: quicksort  Memory: 55kB
+                          Buffers: shared hit=15242 read=7735 written=170
+                          Worker 0:  Sort Method: quicksort  Memory: 54kB
+                          Worker 1:  Sort Method: quicksort  Memory: 59kB
+                          ->  Nested Loop  (cost=747.49..102103.16 rows=1331 width=17) (actual time=0.819..58.311 rows=900.00 loops=3)
+                                Buffers: shared hit=15226 read=7735 written=170
+                                ->  Nested Loop  (cost=747.06..101438.38 rows=1331 width=7) (actual time=0.673..17.761 rows=900.00 loops=3)
+                                      Buffers: shared hit=8638 read=3521 written=68
+                                      ->  Parallel Bitmap Heap Scan on transactions t  (cost=746.63..91754.46 rows=1331 width=30) (actual time=0.421..3.011 rows=900.00 loops=3)
+                                            Recheck Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                            Filter: ((status)::text = 'FAILED'::text)
+                                            Rows Removed by Filter: 20507
+                                            Heap Blocks: exact=409
+                                            Buffers: shared hit=384 read=973 written=9
+                                            Worker 0:  Heap Blocks: exact=383
+                                            Worker 1:  Heap Blocks: exact=460
+                                            ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..745.84 rows=65787 width=0) (actual time=0.845..0.845 rows=64220.00 loops=1)
+                                                  Index Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                                  Index Searches: 1
+                                                  Buffers: shared hit=63
+                                      ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..7.28 rows=1 width=32) (actual time=0.016..0.016 rows=1.00 loops=2700)
+                                            Index Cond: ((vpa)::text = (t.payer_vpa)::text)
+                                            Index Searches: 2700
+                                            Buffers: shared hit=8254 read=2548 written=59
+                                ->  Index Scan using uq_ba_account_user on bank_accounts ba  (cost=0.43..0.50 rows=1 width=18) (actual time=0.045..0.045 rows=1.00 loops=2700)
+                                      Index Cond: (account_id = v.account_id)
+                                      Index Searches: 2700
+                                      Buffers: shared hit=6588 read=4214 written=102
+Planning:
+  Buffers: shared hit=627 read=10
+Planning Time: 1.747 ms
+Execution Time: 63.578 ms
+=== R07 run 2 ===
+Sort  (cost=103201.99..103202.11 rows=48 width=25) (actual time=9.656..10.311 rows=41.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=22979 read=1
+  ->  Finalize GroupAggregate  (cost=103172.25..103200.65 rows=48 width=25) (actual time=9.420..10.298 rows=41.00 loops=1)
+        Group Key: ba.bank_name, t.failure_code
+        Buffers: shared hit=22976 read=1
+        ->  Gather Merge  (cost=103172.25..103199.31 rows=115 width=25) (actual time=9.403..10.270 rows=123.00 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=22976 read=1
+              ->  Partial GroupAggregate  (cost=102172.22..102186.01 rows=48 width=25) (actual time=7.301..7.396 rows=41.00 loops=3)
+                    Group Key: ba.bank_name, t.failure_code
+                    Buffers: shared hit=22976 read=1
+                    ->  Sort  (cost=102172.22..102175.55 rows=1331 width=17) (actual time=7.297..7.325 rows=900.00 loops=3)
+                          Sort Key: ba.bank_name, t.failure_code
+                          Sort Method: quicksort  Memory: 89kB
+                          Buffers: shared hit=22976 read=1
+                          Worker 0:  Sort Method: quicksort  Memory: 60kB
+                          Worker 1:  Sort Method: quicksort  Memory: 43kB
+                          ->  Nested Loop  (cost=747.49..102103.16 rows=1331 width=17) (actual time=0.360..6.956 rows=900.00 loops=3)
+                                Buffers: shared hit=22960 read=1
+                                ->  Nested Loop  (cost=747.06..101438.38 rows=1331 width=7) (actual time=0.350..4.667 rows=900.00 loops=3)
+                                      Buffers: shared hit=12158 read=1
+                                      ->  Parallel Bitmap Heap Scan on transactions t  (cost=746.63..91754.46 rows=1331 width=30) (actual time=0.336..2.282 rows=900.00 loops=3)
+                                            Recheck Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                            Filter: ((status)::text = 'FAILED'::text)
+                                            Rows Removed by Filter: 20507
+                                            Heap Blocks: exact=516
+                                            Buffers: shared hit=1357
+                                            Worker 0:  Heap Blocks: exact=479
+                                            Worker 1:  Heap Blocks: exact=257
+                                            ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..745.84 rows=65787 width=0) (actual time=0.755..0.756 rows=64220.00 loops=1)
+                                                  Index Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                                  Index Searches: 1
+                                                  Buffers: shared hit=63
+                                      ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..7.28 rows=1 width=32) (actual time=0.002..0.002 rows=1.00 loops=2700)
+                                            Index Cond: ((vpa)::text = (t.payer_vpa)::text)
+                                            Index Searches: 2700
+                                            Buffers: shared hit=10801 read=1
+                                ->  Index Scan using uq_ba_account_user on bank_accounts ba  (cost=0.43..0.50 rows=1 width=18) (actual time=0.002..0.002 rows=1.00 loops=2700)
+                                      Index Cond: (account_id = v.account_id)
+                                      Index Searches: 2700
+                                      Buffers: shared hit=10802
+Planning:
+  Buffers: shared hit=634 read=3
+Planning Time: 0.916 ms
+Execution Time: 10.366 ms
+=== R07 run 3 ===
+Sort  (cost=103201.99..103202.11 rows=48 width=25) (actual time=8.705..9.430 rows=41.00 loops=1)
+  Sort Key: (count(*)) DESC
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=22980
+  ->  Finalize GroupAggregate  (cost=103172.25..103200.65 rows=48 width=25) (actual time=8.487..9.411 rows=41.00 loops=1)
+        Group Key: ba.bank_name, t.failure_code
+        Buffers: shared hit=22977
+        ->  Gather Merge  (cost=103172.25..103199.31 rows=115 width=25) (actual time=8.422..9.353 rows=123.00 loops=1)
+              Workers Planned: 2
+              Workers Launched: 2
+              Buffers: shared hit=22977
+              ->  Partial GroupAggregate  (cost=102172.22..102186.01 rows=48 width=25) (actual time=6.699..6.792 rows=41.00 loops=3)
+                    Group Key: ba.bank_name, t.failure_code
+                    Buffers: shared hit=22977
+                    ->  Sort  (cost=102172.22..102175.55 rows=1331 width=17) (actual time=6.695..6.721 rows=900.00 loops=3)
+                          Sort Key: ba.bank_name, t.failure_code
+                          Sort Method: quicksort  Memory: 59kB
+                          Buffers: shared hit=22977
+                          Worker 0:  Sort Method: quicksort  Memory: 52kB
+                          Worker 1:  Sort Method: quicksort  Memory: 57kB
+                          ->  Nested Loop  (cost=747.49..102103.16 rows=1331 width=17) (actual time=0.346..6.397 rows=900.00 loops=3)
+                                Buffers: shared hit=22961
+                                ->  Nested Loop  (cost=747.06..101438.38 rows=1331 width=7) (actual time=0.340..4.252 rows=900.00 loops=3)
+                                      Buffers: shared hit=12159
+                                      ->  Parallel Bitmap Heap Scan on transactions t  (cost=746.63..91754.46 rows=1331 width=30) (actual time=0.330..2.094 rows=900.00 loops=3)
+                                            Recheck Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                            Filter: ((status)::text = 'FAILED'::text)
+                                            Rows Removed by Filter: 20507
+                                            Heap Blocks: exact=461
+                                            Buffers: shared hit=1357
+                                            Worker 0:  Heap Blocks: exact=347
+                                            Worker 1:  Heap Blocks: exact=444
+                                            ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..745.84 rows=65787 width=0) (actual time=0.825..0.825 rows=64220.00 loops=1)
+                                                  Index Cond: (initiated_at >= '2026-06-24 00:00:00+05:30'::timestamp with time zone)
+                                                  Index Searches: 1
+                                                  Buffers: shared hit=63
+                                      ->  Index Scan using vpas_pkey on vpas v  (cost=0.43..7.28 rows=1 width=32) (actual time=0.002..0.002 rows=1.00 loops=2700)
+                                            Index Cond: ((vpa)::text = (t.payer_vpa)::text)
+                                            Index Searches: 2700
+                                            Buffers: shared hit=10802
+                                ->  Index Scan using uq_ba_account_user on bank_accounts ba  (cost=0.43..0.50 rows=1 width=18) (actual time=0.002..0.002 rows=1.00 loops=2700)
+                                      Index Cond: (account_id = v.account_id)
+                                      Index Searches: 2700
+                                      Buffers: shared hit=10802
+Planning:
+  Buffers: shared hit=637
+Planning Time: 0.865 ms
+Execution Time: 9.486 ms

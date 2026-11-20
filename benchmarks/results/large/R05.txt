@@ -1,0 +1,51 @@
+=== R05 run 1 ===
+GroupAggregate  (cost=4.47..4.50 rows=1 width=72) (actual time=0.473..0.476 rows=3.00 loops=1)
+  Group Key: (EXTRACT(hour FROM initiated_at))
+  Buffers: shared hit=4 read=3
+  ->  Sort  (cost=4.47..4.47 rows=1 width=38) (actual time=0.464..0.464 rows=3.00 loops=1)
+        Sort Key: (EXTRACT(hour FROM initiated_at))
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=4 read=3
+        ->  Index Only Scan using idx_txn_merchant_status_time on transactions  (cost=0.43..4.46 rows=1 width=38) (actual time=0.439..0.441 rows=3.00 loops=1)
+              Index Cond: ((merchant_id = 2) AND (status = 'SUCCESS'::text) AND (initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=1 read=3
+Planning:
+  Buffers: shared hit=352
+Planning Time: 1.030 ms
+Execution Time: 0.536 ms
+=== R05 run 2 ===
+GroupAggregate  (cost=4.47..4.50 rows=1 width=72) (actual time=0.070..0.072 rows=3.00 loops=1)
+  Group Key: (EXTRACT(hour FROM initiated_at))
+  Buffers: shared hit=7
+  ->  Sort  (cost=4.47..4.47 rows=1 width=38) (actual time=0.059..0.059 rows=3.00 loops=1)
+        Sort Key: (EXTRACT(hour FROM initiated_at))
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=7
+        ->  Index Only Scan using idx_txn_merchant_status_time on transactions  (cost=0.43..4.46 rows=1 width=38) (actual time=0.030..0.031 rows=3.00 loops=1)
+              Index Cond: ((merchant_id = 2) AND (status = 'SUCCESS'::text) AND (initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=352
+Planning Time: 1.226 ms
+Execution Time: 0.142 ms
+=== R05 run 3 ===
+GroupAggregate  (cost=4.47..4.50 rows=1 width=72) (actual time=0.051..0.053 rows=3.00 loops=1)
+  Group Key: (EXTRACT(hour FROM initiated_at))
+  Buffers: shared hit=7
+  ->  Sort  (cost=4.47..4.47 rows=1 width=38) (actual time=0.043..0.044 rows=3.00 loops=1)
+        Sort Key: (EXTRACT(hour FROM initiated_at))
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: shared hit=7
+        ->  Index Only Scan using idx_txn_merchant_status_time on transactions  (cost=0.43..4.46 rows=1 width=38) (actual time=0.023..0.024 rows=3.00 loops=1)
+              Index Cond: ((merchant_id = 2) AND (status = 'SUCCESS'::text) AND (initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+              Heap Fetches: 0
+              Index Searches: 1
+              Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=352
+Planning Time: 1.006 ms
+Execution Time: 0.115 ms

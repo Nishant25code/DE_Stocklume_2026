@@ -1,0 +1,63 @@
+=== R09 run 1 ===
+Sort  (cost=791078.72..794962.54 rows=1553528 width=90) (actual time=1381.247..1381.533 rows=9360.00 loops=1)
+  Sort Key: t.initiated_at DESC
+  Sort Method: quicksort  Memory: 1396kB
+  Buffers: shared hit=298815 read=59075 written=6
+  ->  Subquery Scan on t  (cost=0.64..472021.76 rows=1553528 width=90) (actual time=2.864..1379.955 rows=9360.00 loops=1)
+        Filter: (t.gap < '00:10:00'::interval)
+        Rows Removed by Filter: 4648820
+        Buffers: shared hit=298812 read=59075 written=6
+        ->  WindowAgg  (cost=0.64..413764.46 rows=4660584 width=90) (actual time=0.298..1283.098 rows=4658180.00 loops=1)
+              Window: w1 AS (PARTITION BY transactions.payer_vpa, transactions.payee_vpa ORDER BY transactions.initiated_at)
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=298812 read=59075 written=6
+              ->  Index Only Scan using idx_txn_success_pair_time on transactions  (cost=0.56..308901.32 rows=4660584 width=74) (actual time=0.289..443.846 rows=4658180.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=298812 read=59075 written=6
+Planning:
+  Buffers: shared hit=256 read=19
+Planning Time: 0.701 ms
+Execution Time: 1381.742 ms
+=== R09 run 2 ===
+Sort  (cost=791078.72..794962.54 rows=1553528 width=90) (actual time=1254.043..1254.336 rows=9360.00 loops=1)
+  Sort Key: t.initiated_at DESC
+  Sort Method: quicksort  Memory: 1396kB
+  Buffers: shared hit=298815 read=59075
+  ->  Subquery Scan on t  (cost=0.64..472021.76 rows=1553528 width=90) (actual time=2.146..1252.751 rows=9360.00 loops=1)
+        Filter: (t.gap < '00:10:00'::interval)
+        Rows Removed by Filter: 4648820
+        Buffers: shared hit=298812 read=59075
+        ->  WindowAgg  (cost=0.64..413764.46 rows=4660584 width=90) (actual time=0.036..1155.030 rows=4658180.00 loops=1)
+              Window: w1 AS (PARTITION BY transactions.payer_vpa, transactions.payee_vpa ORDER BY transactions.initiated_at)
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=298812 read=59075
+              ->  Index Only Scan using idx_txn_success_pair_time on transactions  (cost=0.56..308901.32 rows=4660584 width=74) (actual time=0.028..298.995 rows=4658180.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=298812 read=59075
+Planning:
+  Buffers: shared hit=236 read=39
+Planning Time: 0.814 ms
+Execution Time: 1254.559 ms
+=== R09 run 3 ===
+Sort  (cost=791078.72..794962.54 rows=1553528 width=90) (actual time=1236.905..1237.175 rows=9360.00 loops=1)
+  Sort Key: t.initiated_at DESC
+  Sort Method: quicksort  Memory: 1396kB
+  Buffers: shared hit=298815 read=59075
+  ->  Subquery Scan on t  (cost=0.64..472021.76 rows=1553528 width=90) (actual time=2.697..1235.629 rows=9360.00 loops=1)
+        Filter: (t.gap < '00:10:00'::interval)
+        Rows Removed by Filter: 4648820
+        Buffers: shared hit=298812 read=59075
+        ->  WindowAgg  (cost=0.64..413764.46 rows=4660584 width=90) (actual time=0.035..1139.313 rows=4658180.00 loops=1)
+              Window: w1 AS (PARTITION BY transactions.payer_vpa, transactions.payee_vpa ORDER BY transactions.initiated_at)
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=298812 read=59075
+              ->  Index Only Scan using idx_txn_success_pair_time on transactions  (cost=0.56..308901.32 rows=4660584 width=74) (actual time=0.028..289.996 rows=4658180.00 loops=1)
+                    Heap Fetches: 0
+                    Index Searches: 1
+                    Buffers: shared hit=298812 read=59075
+Planning:
+  Buffers: shared hit=236 read=39
+Planning Time: 0.923 ms
+Execution Time: 1237.389 ms

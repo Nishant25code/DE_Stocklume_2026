@@ -1,0 +1,93 @@
+=== R06 run 1 ===
+Sort  (cost=31865.46..31878.56 rows=5238 width=63) (actual time=20.895..20.970 rows=4080.00 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 333kB
+  Buffers: shared hit=700 read=217
+  ->  HashAggregate  (cost=31476.41..31541.89 rows=5238 width=63) (actual time=19.763..20.238 rows=4080.00 loops=1)
+        Group Key: m.merchant_id
+        Batches: 1  Memory Usage: 1937kB
+        Buffers: shared hit=697 read=217
+        ->  Hash Join  (cost=2175.96..31437.13 rows=5238 width=29) (actual time=15.544..18.974 rows=4400.00 loops=1)
+              Hash Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=697 read=217
+              ->  Bitmap Heap Scan on transactions t  (cost=142.96..29379.66 rows=9323 width=10) (actual time=0.315..2.859 rows=8460.00 loops=1)
+                    Recheck Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text = 'SUCCESS'::text)
+                    Rows Removed by Filter: 740
+                    Heap Blocks: exact=219
+                    Buffers: shared hit=14 read=217
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..140.63 rows=10020 width=0) (actual time=0.213..0.213 rows=9200.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=12
+              ->  Hash  (cost=1283.00..1283.00 rows=60000 width=23) (actual time=15.156..15.156 rows=60000.00 loops=1)
+                    Buckets: 65536  Batches: 1  Memory Usage: 3778kB
+                    Buffers: shared hit=683
+                    ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=23) (actual time=0.008..6.248 rows=60000.00 loops=1)
+                          Buffers: shared hit=683
+Planning:
+  Buffers: shared hit=456 read=3
+Planning Time: 2.388 ms
+Execution Time: 21.183 ms
+=== R06 run 2 ===
+Sort  (cost=31865.46..31878.56 rows=5238 width=63) (actual time=9.191..9.265 rows=4080.00 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 333kB
+  Buffers: shared hit=917
+  ->  HashAggregate  (cost=31476.41..31541.89 rows=5238 width=63) (actual time=8.072..8.529 rows=4080.00 loops=1)
+        Group Key: m.merchant_id
+        Batches: 1  Memory Usage: 1937kB
+        Buffers: shared hit=914
+        ->  Hash Join  (cost=2175.96..31437.13 rows=5238 width=29) (actual time=5.804..7.410 rows=4400.00 loops=1)
+              Hash Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=914
+              ->  Bitmap Heap Scan on transactions t  (cost=142.96..29379.66 rows=9323 width=10) (actual time=0.110..0.936 rows=8460.00 loops=1)
+                    Recheck Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text = 'SUCCESS'::text)
+                    Rows Removed by Filter: 740
+                    Heap Blocks: exact=219
+                    Buffers: shared hit=231
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..140.63 rows=10020 width=0) (actual time=0.097..0.097 rows=9200.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=12
+              ->  Hash  (cost=1283.00..1283.00 rows=60000 width=23) (actual time=5.664..5.664 rows=60000.00 loops=1)
+                    Buckets: 65536  Batches: 1  Memory Usage: 3778kB
+                    Buffers: shared hit=683
+                    ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=23) (actual time=0.003..2.508 rows=60000.00 loops=1)
+                          Buffers: shared hit=683
+Planning:
+  Buffers: shared hit=459
+Planning Time: 0.721 ms
+Execution Time: 9.513 ms
+=== R06 run 3 ===
+Sort  (cost=31865.46..31878.56 rows=5238 width=63) (actual time=9.082..9.157 rows=4080.00 loops=1)
+  Sort Key: (sum(t.amount)) DESC
+  Sort Method: quicksort  Memory: 333kB
+  Buffers: shared hit=917
+  ->  HashAggregate  (cost=31476.41..31541.89 rows=5238 width=63) (actual time=8.016..8.439 rows=4080.00 loops=1)
+        Group Key: m.merchant_id
+        Batches: 1  Memory Usage: 1937kB
+        Buffers: shared hit=914
+        ->  Hash Join  (cost=2175.96..31437.13 rows=5238 width=29) (actual time=5.857..7.380 rows=4400.00 loops=1)
+              Hash Cond: (t.merchant_id = m.merchant_id)
+              Buffers: shared hit=914
+              ->  Bitmap Heap Scan on transactions t  (cost=142.96..29379.66 rows=9323 width=10) (actual time=0.111..0.956 rows=8460.00 loops=1)
+                    Recheck Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                    Filter: ((status)::text = 'SUCCESS'::text)
+                    Rows Removed by Filter: 740
+                    Heap Blocks: exact=219
+                    Buffers: shared hit=231
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..140.63 rows=10020 width=0) (actual time=0.098..0.098 rows=9200.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-29 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-06-30 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=12
+              ->  Hash  (cost=1283.00..1283.00 rows=60000 width=23) (actual time=5.711..5.711 rows=60000.00 loops=1)
+                    Buckets: 65536  Batches: 1  Memory Usage: 3778kB
+                    Buffers: shared hit=683
+                    ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=23) (actual time=0.004..2.534 rows=60000.00 loops=1)
+                          Buffers: shared hit=683
+Planning:
+  Buffers: shared hit=459
+Planning Time: 0.654 ms
+Execution Time: 9.357 ms

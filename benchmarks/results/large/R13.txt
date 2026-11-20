@@ -1,0 +1,42 @@
+=== R13 run 1 ===
+Nested Loop Anti Join  (cost=0.43..31117.22 rows=20850 width=27) (actual time=8.711..145.512 rows=9000.00 loops=1)
+  Buffers: shared hit=164278 read=16964 written=1
+  ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=27) (actual time=0.024..2.257 rows=60000.00 loops=1)
+        Buffers: shared read=683
+  ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..2.82 rows=72 width=4) (actual time=0.002..0.002 rows=0.85 loops=60000)
+        Index Cond: (merchant_id = m.merchant_id)
+        Heap Fetches: 0
+        Index Searches: 60000
+        Buffers: shared hit=164278 read=16281 written=1
+Planning:
+  Buffers: shared hit=450 read=25 dirtied=1
+Planning Time: 1.201 ms
+Execution Time: 145.725 ms
+=== R13 run 2 ===
+Nested Loop Anti Join  (cost=0.43..31117.22 rows=20850 width=27) (actual time=3.484..73.986 rows=9000.00 loops=1)
+  Buffers: shared hit=177321 read=3921 written=1
+  ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=27) (actual time=0.021..2.084 rows=60000.00 loops=1)
+        Buffers: shared read=683
+  ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..2.82 rows=72 width=4) (actual time=0.001..0.001 rows=0.85 loops=60000)
+        Index Cond: (merchant_id = m.merchant_id)
+        Heap Fetches: 0
+        Index Searches: 60000
+        Buffers: shared hit=177321 read=3238 written=1
+Planning:
+  Buffers: shared hit=455 read=20
+Planning Time: 0.828 ms
+Execution Time: 74.185 ms
+=== R13 run 3 ===
+Nested Loop Anti Join  (cost=0.43..31117.22 rows=20850 width=27) (actual time=3.723..76.033 rows=9000.00 loops=1)
+  Buffers: shared hit=176575 read=4667 written=4
+  ->  Seq Scan on merchants m  (cost=0.00..1283.00 rows=60000 width=27) (actual time=0.024..1.995 rows=60000.00 loops=1)
+        Buffers: shared read=683
+  ->  Index Only Scan using idx_txn_merchant_status_time on transactions t  (cost=0.43..2.82 rows=72 width=4) (actual time=0.001..0.001 rows=0.85 loops=60000)
+        Index Cond: (merchant_id = m.merchant_id)
+        Heap Fetches: 0
+        Index Searches: 60000
+        Buffers: shared hit=176575 read=3984 written=4
+Planning:
+  Buffers: shared hit=451 read=24
+Planning Time: 0.696 ms
+Execution Time: 76.233 ms

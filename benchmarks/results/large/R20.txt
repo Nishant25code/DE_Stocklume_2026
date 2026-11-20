@@ -1,0 +1,84 @@
+=== R20 run 1 ===
+GroupAggregate  (cost=133425.39..172757.51 rows=171950 width=44) (actual time=41.322..67.837 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=60 read=5537, temp read=743 written=746
+  ->  Gather Merge  (cost=133425.39..165688.59 rows=277017 width=11) (actual time=40.417..57.143 rows=275280.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=60 read=5537, temp read=743 written=746
+        ->  Sort  (cost=132425.37..132713.93 rows=115424 width=11) (actual time=38.979..42.029 rows=91760.00 loops=3)
+              Sort Key: ((initiated_at)::date)
+              Sort Method: external merge  Disk: 2072kB
+              Buffers: shared hit=60 read=5537, temp read=743 written=746
+              Worker 0:  Sort Method: external merge  Disk: 1928kB
+              Worker 1:  Sort Method: external merge  Disk: 1944kB
+              ->  Parallel Bitmap Heap Scan on transactions  (cost=3891.86..120746.18 rows=115424 width=11) (actual time=2.974..30.476 rows=91760.00 loops=3)
+                    Recheck Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=1843
+                    Buffers: shared hit=44 read=5537
+                    Worker 0:  Heap Blocks: exact=1713
+                    Worker 1:  Heap Blocks: exact=1721
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..3822.60 rows=277017 width=0) (actual time=3.716..3.717 rows=275280.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=2 read=260
+Planning:
+  Buffers: shared hit=308 read=4
+Planning Time: 0.433 ms
+Execution Time: 68.278 ms
+=== R20 run 2 ===
+GroupAggregate  (cost=133425.39..172757.51 rows=171950 width=44) (actual time=26.042..54.462 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=4832 read=765, temp read=744 written=746
+  ->  Gather Merge  (cost=133425.39..165688.59 rows=277017 width=11) (actual time=25.035..42.879 rows=275280.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=4832 read=765, temp read=744 written=746
+        ->  Sort  (cost=132425.37..132713.93 rows=115424 width=11) (actual time=23.618..26.722 rows=91760.00 loops=3)
+              Sort Key: ((initiated_at)::date)
+              Sort Method: external merge  Disk: 2184kB
+              Buffers: shared hit=4832 read=765, temp read=744 written=746
+              Worker 0:  Sort Method: external merge  Disk: 2144kB
+              Worker 1:  Sort Method: external merge  Disk: 1624kB
+              ->  Parallel Bitmap Heap Scan on transactions  (cost=3891.86..120746.18 rows=115424 width=11) (actual time=2.786..15.446 rows=91760.00 loops=3)
+                    Recheck Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=1933
+                    Buffers: shared hit=4816 read=765
+                    Worker 0:  Heap Blocks: exact=1906
+                    Worker 1:  Heap Blocks: exact=1438
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..3822.60 rows=277017 width=0) (actual time=3.623..3.623 rows=275280.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=2 read=260
+Planning:
+  Buffers: shared hit=307 read=5
+Planning Time: 0.465 ms
+Execution Time: 54.934 ms
+=== R20 run 3 ===
+GroupAggregate  (cost=133425.39..172757.51 rows=171950 width=44) (actual time=24.921..49.689 rows=30.00 loops=1)
+  Group Key: ((initiated_at)::date)
+  Buffers: shared hit=5597, temp read=744 written=747
+  ->  Gather Merge  (cost=133425.39..165688.59 rows=277017 width=11) (actual time=24.120..39.416 rows=275280.00 loops=1)
+        Workers Planned: 2
+        Workers Launched: 2
+        Buffers: shared hit=5597, temp read=744 written=747
+        ->  Sort  (cost=132425.37..132713.93 rows=115424 width=11) (actual time=22.147..25.214 rows=91760.00 loops=3)
+              Sort Key: ((initiated_at)::date)
+              Sort Method: external merge  Disk: 1720kB
+              Buffers: shared hit=5597, temp read=744 written=747
+              Worker 0:  Sort Method: external merge  Disk: 2480kB
+              Worker 1:  Sort Method: external merge  Disk: 1752kB
+              ->  Parallel Bitmap Heap Scan on transactions  (cost=3891.86..120746.18 rows=115424 width=11) (actual time=2.469..15.238 rows=91760.00 loops=3)
+                    Recheck Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                    Heap Blocks: exact=1525
+                    Buffers: shared hit=5581
+                    Worker 0:  Heap Blocks: exact=2199
+                    Worker 1:  Heap Blocks: exact=1553
+                    ->  Bitmap Index Scan on idx_txn_initiated  (cost=0.00..3822.60 rows=277017 width=0) (actual time=3.298..3.298 rows=275280.00 loops=1)
+                          Index Cond: ((initiated_at >= '2026-06-01 00:00:00+05:30'::timestamp with time zone) AND (initiated_at < '2026-07-01 00:00:00+05:30'::timestamp with time zone))
+                          Index Searches: 1
+                          Buffers: shared hit=262
+Planning:
+  Buffers: shared hit=312
+Planning Time: 0.422 ms
+Execution Time: 50.074 ms

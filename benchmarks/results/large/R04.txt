@@ -1,0 +1,51 @@
+=== R04 run 1 ===
+Sort  (cost=8947.19..8953.45 rows=2504 width=62) (actual time=1.988..2.116 rows=2400.00 loops=1)
+  Sort Key: initiated_at
+  Sort Method: quicksort  Memory: 289kB
+  Buffers: shared hit=4 read=70
+  ->  Bitmap Heap Scan on transactions  (cost=67.69..8805.84 rows=2504 width=62) (actual time=0.731..1.406 rows=2400.00 loops=1)
+        Recheck Cond: ((initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval)) AND ((status)::text = 'PENDING'::text))
+        Heap Blocks: exact=60
+        Buffers: shared hit=1 read=70
+        ->  Bitmap Index Scan on idx_txn_pending  (cost=0.00..67.06 rows=2504 width=0) (actual time=0.669..0.669 rows=2400.00 loops=1)
+              Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+              Index Searches: 1
+              Buffers: shared read=11
+Planning:
+  Buffers: shared hit=278
+Planning Time: 1.474 ms
+Execution Time: 2.241 ms
+=== R04 run 2 ===
+Sort  (cost=8947.19..8953.45 rows=2504 width=62) (actual time=1.295..1.421 rows=2400.00 loops=1)
+  Sort Key: initiated_at
+  Sort Method: quicksort  Memory: 289kB
+  Buffers: shared hit=74
+  ->  Bitmap Heap Scan on transactions  (cost=67.69..8805.84 rows=2504 width=62) (actual time=0.134..0.685 rows=2400.00 loops=1)
+        Recheck Cond: ((initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval)) AND ((status)::text = 'PENDING'::text))
+        Heap Blocks: exact=60
+        Buffers: shared hit=71
+        ->  Bitmap Index Scan on idx_txn_pending  (cost=0.00..67.06 rows=2504 width=0) (actual time=0.120..0.120 rows=2400.00 loops=1)
+              Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+              Index Searches: 1
+              Buffers: shared hit=11
+Planning:
+  Buffers: shared hit=278
+Planning Time: 1.136 ms
+Execution Time: 1.551 ms
+=== R04 run 3 ===
+Sort  (cost=8947.19..8953.45 rows=2504 width=62) (actual time=1.060..1.156 rows=2400.00 loops=1)
+  Sort Key: initiated_at
+  Sort Method: quicksort  Memory: 289kB
+  Buffers: shared hit=74
+  ->  Bitmap Heap Scan on transactions  (cost=67.69..8805.84 rows=2504 width=62) (actual time=0.115..0.570 rows=2400.00 loops=1)
+        Recheck Cond: ((initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval)) AND ((status)::text = 'PENDING'::text))
+        Heap Blocks: exact=60
+        Buffers: shared hit=71
+        ->  Bitmap Index Scan on idx_txn_pending  (cost=0.00..67.06 rows=2504 width=0) (actual time=0.104..0.104 rows=2400.00 loops=1)
+              Index Cond: (initiated_at < ('2026-06-30 23:59:00+05:30'::timestamp with time zone - '00:15:00'::interval))
+              Index Searches: 1
+              Buffers: shared hit=11
+Planning:
+  Buffers: shared hit=278
+Planning Time: 0.930 ms
+Execution Time: 1.264 ms
