@@ -2,13 +2,13 @@
 
 **Team T0069 · Section D** · Google Pay (UPI) database · PostgreSQL 17.12 · MacBook Air M4, 16 GB, the same laptop as Phases 3 and 4
 
-> **Status (19 Nov 2026).** Faculty have not released `large_data.zip` yet.
+> **Status (25 Nov 2026).** The large-data round is done: `gpay_large`, 5,009,360 transactions, optimized queries only.
 >
-> - **Done:** the design part (sections 5–6) and the partitioning work (`sql/08_partitioning.sql`, tested on the seed data).
-> - **Pending:** the large-data measurements (sections 1–4). They will be filled in as soon as the file is available, using the steps in section 0.
-> - Every number that is filled in below comes from our own raw outputs in `benchmarks/results/`.
+> - **Done:** the results table (section 1), growth analysis (2), what broke at scale (3), the design part (5) and the conclusion (6). All timings come from `benchmarks/results/large/summary.csv` and `benchmarks/results/optimized/summary.csv`; plan details come from the raw files in `benchmarks/results/large/` and `benchmarks/results/optimized/`.
+> - **Result:** all 30 queries meet their target on the large data (section 1).
+> - **Not measured:** the storage sizes of the large database (section 4). The committed results do not contain them; section 4 gives the SQL to measure them.
 
-## 0. How the large-data round will be run
+## 0. How the large-data round was run
 
 These are the steps from README section 5.1, with our files:
 
@@ -27,64 +27,96 @@ psql -d gpay_large -f sql/05_indexes.sql          # ends with VACUUM ANALYZE
   SELECT initiated_at FROM transactions ORDER BY initiated_at DESC OFFSET 199999 LIMIT 1;
   ```
   We put that value into R23. We also check that `initiated_at` is still unique in the large data. If it is not, we page on `(initiated_at, txn_id)`.
+- **What the committed files show for R23.** `benchmarks/results/large/R23.txt` uses `initiated_at < '2026-06-09 04:53:17+05:30'`, which is **not** the seed value in `sql/06_optimized_queries.sql` (`2025-04-21 00:17:55+05:30`, the 200,000th newest of 250,468 rows). It is the large-data value described above. The plan estimates 4,806,480 rows below that timestamp, out of 5,009,360 transactions, so about 202,880 rows are newer; this is only the planner's estimate, and it is consistent with a value near the 200,000th newest row. The committed files do not contain the query that found the value, and they do not show whether `initiated_at` is unique in the large data. `sql/06_optimized_queries.sql` still holds the seed value because it is the seed-data version of the query.
 
 ## 1. Results: optimized queries, seed vs large data
 
 | Query | Target | Optimized on seed (ms) | Optimized on large (ms) | Growth (large ÷ seed) | Meets target? | If not, what we changed |
 |-------|-------:|-----------------------:|------------------------:|----------------------:|:-------------:|-------------------------|
-| R01 | < 5 ms | 0.457 | _pending_ | _pending_ | _pending_ | |
-| R02 | < 5 ms | 0.154 | _pending_ | _pending_ | _pending_ | |
-| R03 | < 5 ms | 0.114 | _pending_ | _pending_ | _pending_ | |
-| R04 | < 5 ms | 0.086 | _pending_ | _pending_ | _pending_ | |
-| R05 | < 250 ms | 0.221 | _pending_ | _pending_ | _pending_ | |
-| R06 | < 5,000 ms | 1.858 | _pending_ | _pending_ | _pending_ | |
-| R07 | < 5,000 ms | 3.759 | _pending_ | _pending_ | _pending_ | |
-| R08 | < 5,000 ms | 57.276 | _pending_ | _pending_ | _pending_ | |
-| R09 | < 5,000 ms | 63.285 | _pending_ | _pending_ | _pending_ | |
-| R10 | < 5 ms | 0.027 | _pending_ | _pending_ | _pending_ | |
-| R11 | < 250 ms | 0.041 | _pending_ | _pending_ | _pending_ | |
-| R12 | < 5 ms | 0.038 | _pending_ | _pending_ | _pending_ | |
-| R13 | < 250 ms | 6.268 | _pending_ | _pending_ | _pending_ | |
-| R14 | < 250 ms | 0.230 | _pending_ | _pending_ | _pending_ | |
-| R15 | < 5,000 ms | 8.874 | _pending_ | _pending_ | _pending_ | |
-| R16 | < 250 ms | 0.441 | _pending_ | _pending_ | _pending_ | |
-| R17 | < 5,000 ms | 16.988 | _pending_ | _pending_ | _pending_ | |
-| R18 | < 5,000 ms | 38.099 | _pending_ | _pending_ | _pending_ | |
-| R19 | < 5,000 ms | 1.570 | _pending_ | _pending_ | _pending_ | |
-| R20 | < 5,000 ms | 3.491 | _pending_ | _pending_ | _pending_ | |
-| R21 | < 250 ms | 0.635 | _pending_ | _pending_ | _pending_ | |
-| R22 | < 5 ms | 0.142 | _pending_ | _pending_ | _pending_ | |
-| R23 | < 250 ms | 0.128 | _pending_ | _pending_ | _pending_ | |
-| R24 | < 5 ms | 0.141 | _pending_ | _pending_ | _pending_ | |
-| R25 | < 5,000 ms | 25.903 | _pending_ | _pending_ | _pending_ | |
-| W01 | < 5 ms | 0.929 | _pending_ | _pending_ | _pending_ | |
-| W02 | < 5 ms | 0.659 | _pending_ | _pending_ | _pending_ | |
-| W03 | < 5 ms | 0.670 | _pending_ | _pending_ | _pending_ | |
-| W04 | < 1,000 ms | 1.266 | _pending_ | _pending_ | _pending_ | |
-| W05 | < 1,000 ms | 3.981 | _pending_ | _pending_ | _pending_ | |
+| R01 | < 5 ms | 0.457 | 0.857 | 1.9× | yes | |
+| R02 | < 5 ms | 0.154 | 0.256 | 1.7× | yes | |
+| R03 | < 5 ms | 0.114 | 0.102 | 0.9× | yes | |
+| R04 | < 5 ms | 0.086 | 1.685 | 19.6× | yes | |
+| R05 | < 250 ms | 0.221 | 0.264 | 1.2× | yes | |
+| R06 | < 5,000 ms | 1.858 | 13.351 | 7.2× | yes | |
+| R07 | < 5,000 ms | 3.759 | 27.810 | 7.4× | yes | |
+| R08 | < 5,000 ms | 57.276 | 1018.682 | 17.8× | yes | |
+| R09 | < 5,000 ms | 63.285 | 1291.230 | 20.4× | yes | |
+| R10 | < 5 ms | 0.027 | 0.079 | 2.9× | yes | |
+| R11 | < 250 ms | 0.041 | 0.492 | 12.0× | yes | |
+| R12 | < 5 ms | 0.038 | 0.075 | 2.0× | yes | |
+| R13 | < 250 ms | 6.268 | 98.714 | 15.7× | yes | |
+| R14 | < 250 ms | 0.230 | 0.300 | 1.3× | yes | |
+| R15 | < 5,000 ms | 8.874 | 131.363 | 14.8× | yes | |
+| R16 | < 250 ms | 0.441 | 18.758 | 42.5× | yes | |
+| R17 | < 5,000 ms | 16.988 | 183.455 | 10.8× | yes | |
+| R18 | < 5,000 ms | 38.099 | 280.783 | 7.4× | yes | |
+| R19 | < 5,000 ms | 1.570 | 29.627 | 18.9× | yes | |
+| R20 | < 5,000 ms | 3.491 | 57.762 | 16.5× | yes | |
+| R21 | < 250 ms | 0.635 | 4.021 | 6.3× | yes | |
+| R22 | < 5 ms | 0.142 | 0.138 | 1.0× | yes | |
+| R23 | < 250 ms | 0.128 | 0.059 | 0.5× | yes | |
+| R24 | < 5 ms | 0.141 | 0.246 | 1.7× | yes | |
+| R25 | < 5,000 ms | 25.903 | 193.276 | 7.5× | yes | |
+| W01 | < 5 ms | 0.929 | 1.643 | 1.8× | yes | |
+| W02 | < 5 ms | 0.659 | 1.156 | 1.8× | yes | |
+| W03 | < 5 ms | 0.670 | 0.532 | 0.8× | yes | |
+| W04 | < 1,000 ms | 1.266 | 6.741 | 5.3× | yes | |
+| W05 | < 1,000 ms | 3.981 | 120.814 | 30.3× | yes | |
+
+**Reading the table.** All 30 queries meet their target on the large data. Growth is `avg_ms` on large divided by `avg_ms` of the optimized queries on seed, both taken from the two `summary.csv` files. The averages include the first run of each query, which is often a cold-cache run (see W05 and R16 in section 3). The "If not, what we changed" column is empty because no query missed its target.
 
 ## 2. Growth analysis
 
-*To be filled in from the measured "Growth" column.*
+The large data has 20.0× the June 2026 payments (13,764 on seed; 275,280 in the R20 plan on the large data). Growth below is the measured column of section 1. Row counts are from the raw plans (run 2) in `benchmarks/results/optimized/` (seed) and `benchmarks/results/large/`.
 
-What we expect, from the shape of each plan on the seed data. These are predictions, not measurements:
+| Measured growth | Queries | What the plans show |
+|-----------------|---------|---------------------|
+| **About the same** (0.5× to 2.9×) | R23 0.5, W03 0.8, R03 0.9, R22 1.0, R05 1.2, R14 1.3, R02 1.7, R24 1.7, W02 1.8, W01 1.8, R01 1.9, R12 2.0, R10 2.9 | They fetch a fixed small number of rows through an index. R10 reads 2 rows on both seed and large; R24 reads 1 row (`transactions_upi_ref_key`); R03 probes the same 2 VPAs of one user and finds 0 rows on both. R01 and R14 read about 5.5 payments per VPA on large against 6 on seed: one user's history did not grow 20×. R23 reads 25 rows through `idx_txn_initiated` (`Buffers: shared hit=28` on large). |
+| **Grew 5× to 8×** (less than the data) | W04 5.3, R21 6.3, R06 7.2, R18 7.4, R07 7.4, R25 7.5 | The data they read grew 20×, but the time grew less. R06 reads 8,460 payments for 29 June (423 on seed). R07 reads 2,700 rows (135 on seed). R25 reads about 272,780 June payments (13,639 on seed). R21 finds 6,000 merchants (300). R18 makes 104,740 index probes (5,237). R25 and R18 show `Workers Launched: 2` on large, and R07 uses a `Parallel Bitmap Heap Scan`, so parallel workers share part of the work. W04 expires 1,020 rewards (51). |
+| **About 20×** (10× to 21×) | R17 10.8, R11 12.0, R15 14.8, R13 15.7, R20 16.5, R08 17.8, R19 18.9, R04 19.6, R09 20.4 | Their work is proportional to a share of a table. R09 reads 4,658,180 SUCCESS rows (232,909 on seed), a 20.0× increase. R08 reads 2,054,840 P2P rows (102,742). R13 probes `idx_txn_merchant_status_time` once per merchant: 60,000 probes (3,000). R19 joins 4,780 merchants (239). R04 reads 2,400 PENDING rows (120). R11 reads 1,020 rewards (51). R17 reads about 2.8 million rows (139,887; 932,580 × 3 workers). R20 reads 275,280 June rows (13,764). R15 changed plan: on large it reads `idx_txn_merchant_status_time` in a Merge Join (143,740 rows) instead of the date index used on seed. |
+| **More than 20×** | W05 30.3, R16 42.5 | Not caused by the data size. Both have one slow first run (a cold-cache run) in the raw plans. See section 3. |
 
-| Expected growth | Queries | Why |
-|-----------------|---------|-----|
-| **About the same** (index lookup, depth grows with log n) | R02, R04, R10, R11, R12, R16, R22, R23, R24, W01–W05 | They fetch a fixed small number of rows through an index (one VPA, one UPI reference, the 125 PENDING rows, 25 rows of a page). A B-tree gets at most one level deeper at 20×. |
-| **Roughly 20×** (they read a fixed *share* of the table) | R06, R07, R08, R09, R15, R17, R18, R20, R25 | Each reads "all June payments", "all SUCCESS payments" or "all P2M payments". At 20× there are 20× as many such rows. |
-| **Depends on how the data grew** | R01, R03, R05, R14, R19, R13, R21 | A per-user or per-merchant query stays flat if there are 20× more users, but grows if each user makes 20× more payments. |
+**Where our predictions were right and where they were wrong.** The earlier draft of this section predicted, from the seed plans, three groups:
+
+- *"About the same": R02, R04, R10, R11, R12, R16, R22, R23, R24, W01–W05.*
+  - **Right** for R02, R10, R12, R22, R23, R24, W01, W02, W03 (all 2.9× or less).
+  - **Wrong** for R04 (19.6×), R11 (12.0×), R16 (42.5×), W04 (5.3×) and W05 (30.3×). We assumed they touch a fixed number of rows. They do not: they read **all** PENDING payments, all rewards expiring in a 3-day window, all open disputes, or all overdue bills, and these sets grew 20× (120 → 2,400 PENDING rows; 51 → 1,020 rewards; 75 → 1,500 disputes; 201 → 4,020 bills). They stayed within their targets because each row is cheap to read through an index.
+- *"Roughly 20×": R06, R07, R08, R09, R15, R17, R18, R20, R25.*
+  - **Right** for the row counts (20×) and for R08, R09 (17.8×, 20.4×).
+  - **Wrong about time** for R06, R07, R18, R25 (7.2× to 7.5×), R15, R17 and R20 (10.8× to 16.5×). The rows grew 20×, but the time grew less. For R17, R18, R20 and R25 the large plans use 2 parallel workers; R08 and R09 are single-process plans and grew almost exactly 20×. We have not tested the effect of parallelism separately, so this is what the plans show, not a measured cause.
+- *"Depends on how the data grew": R01, R03, R05, R14, R19, R13, R21.*
+  - Per-user queries (R01, R03, R05, R14) stayed flat, 0.9× to 1.9×: users and merchants grew 20×, not the payments of each user or merchant. Merchant-count queries (R13, R19, R21) grew with the merchant count (15.7×, 18.9×, 6.3×), as predicted.
 
 ## 3. What broke at scale and how we fixed it
 
-*To be filled in: any query that misses its target on the large data, with before/after plans.*
+**Nothing missed its target, so nothing needed fixing.** We made no change after the large-data run, and there are no "before/after" large-data plans in the repository. We did not add any index or rewrite after seeing the large results. The points below are the queries that look odd in `summary.csv`, explained from the raw plans.
 
-The queries we will watch first:
+**W05 (30.3×, avg 120.814 ms, min 15.620, max 326.022).** The average is dominated by the first run.
 
-- **R09:** reads every SUCCESS payment. 63 ms on seed, so about 1.3 s if it grows 20×; still inside 5 s.
-- **R08:** reads every successful P2P payment. 57 ms on seed.
-- **R18:** we could not speed it up in Phase 4 (38 ms on seed).
-- **R13:** the anti join probes I3 once per merchant, so it grows with the merchant count.
+| Run | Execution time | Evidence in `large/W05.txt` |
+|-----|---------------:|-----------------------------|
+| 1 | 326.022 ms | `Buffers: shared hit=33672 read=4508 dirtied=4543 written=47`: the pages came from disk and were dirtied |
+| 2 | 20.801 ms | no `read=` buffers in the plan |
+| 3 | 15.620 ms | no `read=` buffers in the plan |
+
+All three runs use the same plan (`Bitmap Index Scan on idx_bill_due_date` and then `Update on bill_payments`) and update 4,020 rows (201 on seed). The median is 20.801 ms. Even the worst run is under the 1,000 ms target. The planner also estimated 28,804 rows for the scan (about 7× too many) while 4,020 were found; this did not change the plan type.
+
+**R16 (42.5×, avg 18.758 ms, min 2.358, max 51.367).** Same pattern: run 1 shows `Buffers: shared hit=4227 read=1840` (the 1,500 lookups into `transactions_pkey` account for `read=1776` of those buffers), and runs 2 and 3 take 2.549 ms and 2.358 ms. The median is 2.549 ms, 6.9× the seed median of 0.368 ms, which is close to the 20× growth in disputes (75 → 1,500) with a cheap lookup each. The target is 250 ms.
+
+**R08 (1,018.682 ms) and R09 (1,291.230 ms).** These are the slowest queries and both are about 20× their seed time, because they read the whole SUCCESS data:
+- R09: `WindowAgg` over 4,658,180 rows from `idx_txn_success_pair_time` (`Heap Fetches: 0`); the filter removes 4,648,820 and keeps 9,360.
+- R08: `Incremental Sort` and `GroupAggregate` over 2,054,840 rows; the `HAVING` filter removes 2,045,320 and keeps 260.
+
+Both are index-only (no heap access) but must read every qualifying entry. They are within their 5,000 ms target, with 3.9× (R09) and 4.9× (R08) headroom.
+
+**R18 (280.783 ms) and R20 (54.934 ms median).** Their plans sort on disk: R18 shows `Sort Method: external merge  Disk: 2448kB` for the final sort, and about 6 MB per process for the partial sorts; R20 shows about 2 MB per process. This means the sorts did not fit in `work_mem`. We did not test a larger `work_mem`.
+
+**R13 (15.7×, 98.714 ms).** A `Nested Loop Anti Join` that probes `idx_txn_merchant_status_time` once per merchant (`Index Searches: 60000`, 3,000 on seed), so it grows with the merchant count. Target 250 ms; it has 2.5× headroom, the smallest of the interactive queries.
+
+**R04 (1.685 ms, target 5 ms).** The real-time query with the least headroom, 3.0×. It reads all PENDING rows (2,400 on large) through `idx_txn_pending`. It grows with the PENDING backlog, not with the table size.
+
+**R23.** See section 0: the large run used a value for the 200,000th newest row, and 0.067 ms for run 1 shows it reads 25 entries only.
 
 ## 4. Storage
 
@@ -102,9 +134,30 @@ Seed data, measured with `pg_relation_size` / `pg_indexes_size` / `pg_total_rela
 | disputes | 0.4 MB | 0.1 MB | 0.5 MB |
 | **All of `gpay`** | **55.1 MB** | **97.8 MB** | **153.2 MB** |
 
-**Large data:** *to be filled in with the same query on `gpay_large`.*
+**Large data: not measured in the committed results.** The files in `benchmarks/results/` contain timings and plans, not table or index sizes of `gpay_large`, so we do not state any size here. To measure it, connect to `gpay_large` and run the following (the same kind of query as for the seed table):
 
-**Index-to-table ratio.** On the seed data, indexes are **1.8× the size of the tables** (97.8 MB vs 55.1 MB). Most of that is the 7 `transactions` indexes, 80.4 MB against a 35.6 MB heap (the Phase 4 report has the per-index sizes). We expect the same ratio at 20×, because each index grows with the number of rows it covers.
+```sql
+SELECT relname                                        AS "table",
+       pg_size_pretty(pg_relation_size(c.oid))        AS heap,
+       pg_size_pretty(pg_indexes_size(c.oid))         AS indexes,
+       pg_size_pretty(pg_total_relation_size(c.oid))  AS total
+FROM pg_class c
+JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE n.nspname = 'gpay' AND c.relkind = 'r'
+ORDER BY pg_total_relation_size(c.oid) DESC;
+
+-- whole schema, and the whole database
+SELECT pg_size_pretty(sum(pg_relation_size(c.oid)))       AS heap,
+       pg_size_pretty(sum(pg_indexes_size(c.oid)))        AS indexes,
+       pg_size_pretty(sum(pg_total_relation_size(c.oid))) AS total
+FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE n.nspname = 'gpay' AND c.relkind = 'r';
+SELECT pg_size_pretty(pg_database_size('gpay_large'));
+```
+
+Run it after `05_indexes.sql` (which ends with `VACUUM ANALYZE`), as for the seed numbers, and paste the output here.
+
+**Index-to-table ratio.** On the seed data, indexes are **1.8× the size of the tables** (97.8 MB vs 55.1 MB). Most of that is the 7 `transactions` indexes, 80.4 MB against a 35.6 MB heap (the Phase 4 report has the per-index sizes). We expect a similar ratio at 20×, because each index grows with the number of rows it covers; this is an expectation and **is not measured** (see above).
 
 ## 5. Architecture for 100×
 
@@ -114,7 +167,7 @@ Seed data, measured with `pg_relation_size` / `pg_indexes_size` / `pg_total_rela
 
 | Scale | Payments per month | Monthly heap + indexes |
 |-------|-------------------:|-----------------------:|
-| 20× | about 275,000 | — |
+| 20× | 275,280 (June 2026, from the R20 plan on the large data) | not measured |
 | 100× | about 1.4 million | about 650 MB |
 
 ### 5.1 Partitioning
@@ -233,13 +286,18 @@ Closed days never change, so each refresh only computes **one new day**: `INSERT
 
 ## 6. Conclusion
 
-*To be completed after the large-data run.* Based on the seed results and the design above:
+**Is the database ready for 20×? Yes, for the 30 queries we were given.** On `gpay_large` (5,009,360 transactions) all 30 queries meet their targets (section 1), with the same schema, the same indexes and no changes after the large run.
 
-**Ready for 20×:**
-- The real-time queries are all index lookups, under 1 ms on the seed data, and should stay far below 5 ms.
-- The reports have more than 50× headroom under their 5 s target, even if they grow 20× (largest today: R09, 63 ms).
+**What the measurements show:**
+- **Real-time / payment path** (target < 5 ms): the slowest is R04 at 1.685 ms, then W01 at 1.643 ms and R01 at 0.857 ms. R04 has the least headroom (3.0×) because it reads all PENDING payments (2,400 rows on large, 120 on seed).
+- **Interactive tools** (target < 250 ms): the slowest is R13 at 98.714 ms (2.5× headroom). It probes the transactions index once for each of the 60,000 merchants.
+- **Reports** (target < 5,000 ms): the slowest are R09 at 1,291.230 ms (3.9× headroom) and R08 at 1,018.682 ms (4.9× headroom). Both read every SUCCESS payment, and both grew by about 20× (20.4× and 17.8×).
+- **Batch jobs** (target < 1,000 ms): W05 averages 120.814 ms and W04 6.741 ms.
 
 **Remaining risks:**
-1. **The full-scan reports (R08, R09, R17, R18) grow linearly.** At 100× they need summary tables or the analytics store.
-2. **Write cost.** The 7 `transactions` indexes make inserts about 2.2× slower (Phase 4). That is fine at today's rate, but it is the first thing to revisit at 100×.
-3. **Partitioning changes the key rules.** Unique `upi_ref` and FKs from `rewards` / `disputes` need the registry and composite keys described in 5.1.
+1. **The full-scan reports (R08, R09) grow linearly with the number of payments.** R09 has 3.9× headroom, so 5× more data on top of the large dataset would put it over its 5,000 ms target if the growth stays linear. At 100× they need the summary tables or the analytics store from sections 5.2 and 5.4. R17 (2.8 million rows read) and R18 (sorts spill to disk, section 3) are the next ones to watch.
+2. **First-run (cold cache) cost.** W05 took 326.022 ms and R16 51.367 ms on their first run, against about 16–21 ms and about 2.5 ms on later runs (section 3). The averages in section 1 include these runs. After a restart or a cache flush, users would see the slow first run. All first runs are still within their targets.
+3. **Memory settings.** The sorts of R18 and R20 spill to disk. We did not test a larger `work_mem`, so we cannot say how much it would help.
+4. **Write cost.** The 7 `transactions` indexes make inserts about 2.2× slower (Phase 4 report). W01 averages 1.643 ms on large, inside its 5 ms target, but it is the first thing to revisit at 100×.
+5. **Partitioning changes the key rules.** Unique `upi_ref` and FKs from `rewards` / `disputes` need the registry and composite keys described in 5.1. Partitioning was tested on the seed data only (`benchmarks/results/partitioning/seed_output.txt`); the committed results do not include a partitioned large-data run.
+6. **Not measured:** the storage size of `gpay_large` (section 4), and whether `initiated_at` is unique in the large data (section 0).
