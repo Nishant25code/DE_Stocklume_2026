@@ -1,6 +1,8 @@
 # 05 · Scalability Report
 
-**Team T0069 · Section D** · Google Pay (UPI) database · PostgreSQL 17.12 · MacBook Air M4, 16 GB, the same laptop as Phases 3 and 4
+**Team T0069 · Section D** · Google Pay (UPI) database
+
+> **Machines used.** The seed results (Phases 3 and 4) were measured on a MacBook Air M4, 16 GB, with PostgreSQL 17.12. The large-data run (`benchmarks/results/large/`) was made by Cellina on her own laptop with **PostgreSQL 18**: its plans print fractional row counts (`rows=1.00`) and `Index Searches:` lines, which only PostgreSQL 18 shows. Growth ratios below therefore compare two machines, so small differences (under about 2×) are within machine-to-machine noise.
 
 > **Status (25 Nov 2026).** The large-data round is done: `gpay_large`, 5,009,360 transactions, optimized queries only.
 >
